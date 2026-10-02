@@ -7,6 +7,7 @@ class Bus{
 
     string busID;
     string routeID;
+    string dispatchTime;
     double latitude;
     double longitude;
     int capacity;
@@ -14,8 +15,13 @@ class Bus{
 
     public :
 
+    Bus(string busID, string routeID, int capacity);
+
     void updateLocation(double latitude, double longitude);
     void updateOccupancy(int occupancy);
+    void setDispatchTime(string dispatchTime);
+    
+    string getDispatchTime() const; 
 
     string getBusID() const;
     string getRouteID() const;
@@ -25,5 +31,5 @@ class Bus{
 
     int getCapacity() const;
     int getOccupancy() const;
-    
+
 }; 
