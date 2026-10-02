@@ -1,56 +1,37 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="color-scheme" content="light">
-  <title>CampusBus | College transport</title>
-  <link rel="stylesheet" href="styles.css">
-  <script src="app.js" defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>CampusBus | College Transport</title>
+
+    <link rel="stylesheet" href="styles.css">
+    <script src="app.js" defer></script>
 </head>
+
 <body>
-  <header class="site-header">
-    <div class="header-inner">
-      <a class="brand" href="index.html" aria-label="CampusBus home"><span class="brand-mark" aria-hidden="true">CB</span><span>CampusBus<small>Graphic Era University</small></span></a>
-      <div id="account" class="account" hidden><span id="account-email"></span><button id="logout" class="button button-secondary" type="button">Sign out</button></div>
-    </div>
-  </header>
 
-  <main>
-    <section id="login-view" class="login-layout" aria-labelledby="login-title">
-      <div class="login-intro">
-        <p class="eyebrow">COLLEGE TRANSPORT</p>
-        <h1>Your next bus,<br>at a glance.</h1>
-        <p class="intro-text">Check which buses are coming to your stop, their estimated arrival, and available capacity.</p>
-        <ul class="feature-list"><li>Last confirmed stop</li><li>Estimated time of arrival</li><li>Passenger occupancy</li></ul>
-      </div>
-      <div class="login-card">
-        <h2 id="login-title">Sign in</h2>
-        <p class="muted">Use your university email to continue.</p>
-        <form id="login-form" novalidate>
-          <div class="form-field"><label for="userid">University email</label><input id="userid" name="userid" type="email" placeholder="Your email" autocomplete="username" inputmode="email" spellcheck="false" required aria-describedby="email-help"><small id="email-help"></small></div>
-          <div class="form-field"><label for="password">Password</label><div class="password-field"><input id="password" name="password" type="password" autocomplete="current-password" required><button id="toggle-password" type="button" aria-controls="password" aria-pressed="false">Show</button></div></div>
-          <p id="login-error" class="error" role="alert" hidden></p>
-          <button type="submit" class="button button-primary login-submit">Sign in</button>
-        </form>
-        <p class="login-footnote">For Graphic Era University students and staff.</p>
-      </div>
-    </section>
+    <!-- Header -->
+    <header class="site-header">
+        <div class="header-inner">
 
-    <section id="dashboard-view" class="dashboard" aria-labelledby="dashboard-title" hidden>
-      <div class="page-heading"><div><p class="eyebrow">YOUR COMMUTE</p><h1 id="dashboard-title" tabindex="-1">Bus arrivals</h1><p class="muted">Choose your stop to check approaching buses.</p></div><span id="connection-status" class="status"><span class="status-dot" aria-hidden="true"></span>Waiting for connection</span></div>
-      <section class="stop-panel" aria-label="Stop selection"><div class="stop-field"><label for="stop-select">Your stop</label><select id="stop-select" disabled aria-describedby="stop-help"><option value="">Stops are not available yet</option></select><small id="stop-help">Stops will appear when the route network is connected.</small></div><button id="refresh" class="button button-secondary" type="button" disabled>Refresh arrivals</button></section>
-      <section class="arrivals-panel" aria-labelledby="arrivals-title">
-        <div class="panel-heading"><div><h2 id="arrivals-title">Upcoming buses</h2><p id="selected-stop-label" class="muted">No stop selected</p></div><span id="updated-at" class="muted">Last updated: —</span></div>
-        <div id="board-error" class="board-error error" role="alert" hidden></div>
-        <div class="table-scroll" tabindex="0" role="region" aria-label="Bus arrivals table"><table><thead><tr><th scope="col">Bus / route</th><th scope="col">Last confirmed stop</th><th scope="col">Arrival at your stop</th><th scope="col">Passengers / capacity</th><th scope="col">Available capacity</th></tr></thead><tbody id="arrivals-body"></tbody></table></div>
-        <div id="empty-state" class="empty-state" role="status"><span class="empty-icon" aria-hidden="true">↔</span><h3 id="empty-title">Your arrivals board is ready</h3><p id="empty-description">Bus details will appear here once the service is connected and you select a stop.</p></div>
-      </section>
-      <div class="info-grid"><section class="info-card"><h3>Stop-based updates</h3><p>See the last confirmed stop and an estimated arrival time for each approaching bus.</p></section><section class="info-card"><h3>Capacity estimates</h3><p>Passenger counts come from doorway crossings. Available capacity does not guarantee an empty seat.</p></section></div>
-      <p id="eta-note" class="muted eta-note"></p>
-    </section>
-    <noscript><p class="noscript-note">Enable JavaScript to use the sign-in form. The preview uses JavaScript for login and page navigation.</p></noscript>
-  </main>
-  <footer class="site-footer">CampusBus · Graphic Era University · College transport</footer>
-</body>
-</html>
+            <a class="brand" href="index.html">
+                <span class="brand-mark">CB</span>
+
+                <span>
+                    CampusBus
+                    <small>Graphic Era University</small>
+                </span>
+            </a>
+
+            <div id="account" class="account" hidden>
+                <span id="account-email"></span>
+                <button id="logout" class="button button-secondary">
+                    Sign out
+                </button>
+            </div>
+
+        </div>
+    </header>
