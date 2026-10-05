@@ -9,6 +9,8 @@ Bus::Bus(string busID, string routeID, int capacity)
     latitude = 0.0;
     longitude = 0.0;
     occupancy = 0;
+    dispatchTime = "";
+    lastUpdated = "";
 }
 
 void Bus::updateLocation(double latitude, double longitude)
@@ -27,20 +29,33 @@ void Bus::setDispatchTime(string dispatchTime)
     this->dispatchTime = dispatchTime;
 }
 
+void Bus::setLastUpdated(string lastUpdated)
+{
+    this->lastUpdated = lastUpdated;
+}
+
 string Bus::getDispatchTime() const
 {
     return dispatchTime;
 }
 
-string Bus::getBusID() const{
+string Bus::getLastUpdated() const
+{
+    return lastUpdated;
+}
+
+string Bus::getBusID() const
+{
     return busID;
 }
 
-int Bus::getCapacity() const{
+int Bus::getCapacity() const
+{
     return capacity;
 }
 
-int Bus::getOccupancy() const{
+int Bus::getOccupancy() const
+{
     return occupancy;
 }
 
@@ -58,4 +73,3 @@ double Bus::getLongitude() const
 {
     return longitude;
 }
-
