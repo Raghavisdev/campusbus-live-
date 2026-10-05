@@ -1,6 +1,6 @@
 #include <iostream>
 #include "src/core/models/Bus.h"
-#include "src/core/flask_client/FlaskClient.h"
+#include "src/core/bus_location_manager/BusLocationManager.h"
 
 using namespace std;
 
@@ -8,17 +8,16 @@ int main()
 {
     Bus bus("B1", "R1", 50);
 
-    int occupancy = FlaskClient::getOccupancy(
-        bus.getBusID()
-    );
+    BusLocationManager manager;
 
-    if (occupancy != -1)
-    {
-        bus.updateOccupancy(occupancy);
-    }
+    manager.addBus(bus);
 
-    cout << "Bus ID: " << bus.getBusID() << endl;
-    cout << "Occupancy: " << bus.getOccupancy() << endl;
+    manager.updateBusOccupancy("B1");
+
+    Bus updatedBus = manager.getBus("B1");
+
+    cout << "Bus ID: " << updatedBus.getBusID() << endl;
+    cout << "Occupancy: " << updatedBus.getOccupancy() << endl;
 
     return 0;
 }

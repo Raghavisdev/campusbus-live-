@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include "../models/Bus.h"
+#include "../flask_client/FlaskClient.h"
 
 using namespace std;
 
@@ -20,7 +21,10 @@ public:
         double latitude,
         double longitude,
         string lastUpdated
-    );  
+    );
+
+    void updateBusOccupancy(string busID);
+
     Bus getBus(string busID) const;
     vector<Bus> getAllBuses() const;
 };
