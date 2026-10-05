@@ -7,10 +7,13 @@ void BusLocationManager::addBus(Bus bus)
 void BusLocationManager::updateBusLocation(
     string busID,
     double latitude,
-    double longitude
+    double longitude,
+     string lastUpdated
 )
 {
     buses.at(busID).updateLocation(latitude, longitude);
+    buses.at(busID).setLastUpdated(lastUpdated);
+
 }
 
 Bus BusLocationManager::getBus(string busID) const

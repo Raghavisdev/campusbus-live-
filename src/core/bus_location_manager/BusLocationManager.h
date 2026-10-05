@@ -18,7 +18,8 @@ public:
     void updateBusLocation(
         string busID,
         double latitude,
-        double longitude
+        double longitude,
+        string lastUpdated
     );  
     Bus getBus(string busID) const;
     vector<Bus> getAllBuses() const;
