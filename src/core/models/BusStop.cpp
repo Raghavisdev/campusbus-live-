@@ -1,10 +1,16 @@
 #include "BusStop.h"
 
-BusStop::BusStop(string stopID, string stopName, double latitude, double longitude){
-    this->latitude=latitude;
-    this->longitude=longitude;
-    this->stopID=stopID;
-    this->stopName=stopName;
+BusStop::BusStop(
+    string stopID,
+    string stopName,
+    double latitude,
+    double longitude
+)
+{
+    this->latitude = latitude;
+    this->longitude = longitude;
+    this->stopID = stopID;
+    this->stopName = stopName;
 }
 
 string BusStop::getStopID() const

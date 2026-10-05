@@ -1,3 +1,6 @@
+#ifndef ROUTE_H
+#define ROUTE_H
+
 #include <string>
 #include <vector>
 #include "BusStop.h"
@@ -6,16 +9,23 @@ using namespace std;
 
 class Route
 {
-    private:
+private:
 
-        string routeID;
-        vector<BusStop> stops;
+    string routeID;
+    vector<BusStop> stops;
+    vector<double> travelTimes;
 
-    public :
-        Route(string routeID);
+public:
 
-        void addstop(BusStop stop);
-        vector<BusStop> getRoute() const;
-        string getRouteId() const;
+    Route(string routeID);
 
-};  
+    void addstop(BusStop stop);
+    void addstop(BusStop stop, double travelTime);
+
+    vector<BusStop> getRoute() const;
+    vector<double> getTravelTimes() const;
+
+    string getRouteId() const;
+};
+
+#endif
