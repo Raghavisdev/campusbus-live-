@@ -5,6 +5,27 @@ void BusLocationManager::addBus(Bus bus)
     buses.emplace(bus.getBusID(), bus);
 }
 
+void BusLocationManager::loadBuses(Database& database)
+{
+    vector<Bus> allBuses = database.getAllBuses();
+
+    for (size_t i = 0; i < allBuses.size(); i++)
+    {
+        Bus bus = database.getBusStatus(
+            allBuses[i].getBusID()
+        );
+
+        if (bus.getBusID() != "")
+        {
+            addBus(bus);
+        }
+        else
+        {
+            addBus(allBuses[i]);
+        }
+    }
+}
+
 void BusLocationManager::updateBusLocation(
     string busID,
     double latitude,
