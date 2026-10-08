@@ -6,6 +6,7 @@
 #include <vector>
 #include "../models/Bus.h"
 #include "../flask_client/FlaskClient.h"
+#include "../database/Database.h"
 
 using namespace std;
 
@@ -16,6 +17,8 @@ private:
 
 public:
     void addBus(Bus bus);
+    void loadBuses(Database& database);
+
     void updateBusLocation(
         string busID,
         double latitude,
