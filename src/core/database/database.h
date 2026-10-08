@@ -23,6 +23,7 @@ public:
 
     Bus getBus(string busID);
     vector<Bus> getAllBuses();
+    Bus getBusStatus(string busID);
 };
 
 #endif
