@@ -48,6 +48,8 @@ A student provides their current stop and destination.
 
 The backend checks the available buses and determines which buses can serve the requested journey.
 
+The database layer can identify routes containing both the current stop and destination, verify the direction using stop order, find buses assigned to those routes, and filter buses that have no available seats.
+
 It then checks whether those buses have available capacity and considers their current position and estimated arrival time.
 
 The most suitable bus is then returned to the user.
@@ -104,6 +106,19 @@ The Python system sends the latest occupancy to Flask, and the C++ backend can r
 
 SQLite is being used to store persistent backend information such as users, buses, bus stops, routes, and related data.
 
+The SQLite database currently contains tables for users, buses, bus stops, routes, route-stop relationships, route segments,  and live bus status.
+
+Foreign keys are used to maintain relationships between buses, routes, and stops.
+Route stop order is stored so  that the backend can verify whether a destination occurs after the user's current stop on a particular route.
+
+### C++ and SQLite Integration
+
+The C++ backend has been connected to SQLite using the SQLite C API. A `Database` class is used to open and access `campusbus.db`.
+
+The current database integration can retrieve an individual bus as well as all buses stored in the database. Database records are converted into C++ `Bus` objects, which will gradually replace the hardcoded bus data currently present in `main.cpp`.
+
+The SQLite integration has been successfully tested with buses B1, B2, and B3.
+
 ### Frontend
 
 The frontend will provide the user interface for login, selecting stops and destinations, and viewing bus recommendations and related information.
@@ -154,3 +169,7 @@ For example, a route may contain:
 
 ```text
 S1 → S2 → S3 → S4 → S5
+
+Route information is also stored in SQLite using `routes`, `route_stops`, and `route_segments`.
+
+The `route_stops` table stores the order of stops on each route, while `route_segments` stores the distance and estimated travel time between consecutive stops.
