@@ -1,4 +1,17 @@
+# Model weights (downloaded automatically by ultralytics)
 yolo11n.pt
+
+# Build output (compiled .exe / .o files)
 output/
+*.exe
+*.o
+
+# Python
 __pycache__/
 *.pyc
+venv/
+.venv/
+
+# Local SQLite database: rebuild with `python database/init_db.py`
+database/*.db
+database/*.db-journal
