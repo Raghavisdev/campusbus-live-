@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CampusBus Live - Find Bus</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-page="home">
+  <main class="container">
+    <header class="topbar">
+      <p id="welcome" class="welcome"></p>
+      <button type="button" id="logoutButton" class="secondary">Logout</button>
+    </header>
+
+    <form id="findForm" class="card">
+      <h2>Find a bus</h2>
+
+      <label for="fromStop">Current stop</label>
+      <select id="fromStop" required>
+        <option value="">Loading stops...</option>
+      </select>
+
+      <label for="toStop">Destination</label>
+      <select id="toStop" required>
+        <option value="">Loading stops...</option>
+      </select>
+
+      <button type="submit" id="findButton" disabled>Find Bus</button>
+    </form>
+
+    <section id="result" class="card result" aria-live="polite" hidden></section>
+
+    <p class="note">Prototype: bus location and occupancy are simulated.</p>
+  </main>
+
+  <script src="mockApi.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
