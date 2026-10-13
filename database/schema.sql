@@ -3,13 +3,14 @@
 
 PRAGMA foreign_keys = ON;
 
-DROP TABLE IF EXISTS users;
-DROP TABLE IF EXISTS bus_stops;
-DROP TABLE IF EXISTS routes;
-DROP TABLE IF EXISTS route_stops;
-DROP TABLE IF EXISTS buses;
-DROP TABLE IF EXISTS bus_status;
+-- Drop child tables before the tables they reference
 DROP TABLE IF EXISTS route_segments;
+DROP TABLE IF EXISTS bus_status;
+DROP TABLE IF EXISTS buses;
+DROP TABLE IF EXISTS route_stops;
+DROP TABLE IF EXISTS routes;
+DROP TABLE IF EXISTS bus_stops;
+DROP TABLE IF EXISTS users;
 
 CREATE TABLE users (
     user_id INTEGER PRIMARY KEY,
