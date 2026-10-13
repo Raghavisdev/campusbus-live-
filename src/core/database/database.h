@@ -5,6 +5,8 @@
 #include <string>
 #include <vector>
 #include "../models/Bus.h"
+#include "../models/BusStop.h"
+#include "../models/Route.h"
 
 using namespace std;
 
@@ -24,6 +26,9 @@ public:
     Bus getBus(string busID);
     vector<Bus> getAllBuses();
     Bus getBusStatus(string busID);
+    vector<BusStop> getAllStops();
+    Route getRoute(string routeID);
+    vector<Route> getAllRoutes();
 };
 
 #endif
