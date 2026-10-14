@@ -1,13 +1,37 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>My First Website</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CampusBus Live - Login</title>
+  <link rel="stylesheet" href="style.css">
 </head>
+<body data-page="login">
+  <main class="container">
+    <header class="brand">
+      <h1>CampusBus Live</h1>
+      <p class="subtitle">Find the best college bus to your stop</p>
+    </header>
 
-<body>
-    <h1>Hello, World!</h1>
-    <p>This is my first HTML page.</p>
+    <form id="loginForm" class="card" novalidate>
+      <label for="collegeId">College ID</label>
+      <input
+        type="text"
+        id="collegeId"
+        inputmode="numeric"
+        maxlength="10"
+        placeholder="e.g. 2512510001"
+        autocomplete="username"
+        required
+      >
+      <p id="loginError" class="error" role="alert"></p>
+      <button type="submit" id="loginButton">Login</button>
+    </form>
 
-    <button>Click Me</button>
+    <p class="note">Prototype: bus location and occupancy are simulated.</p>
+  </main>
+
+  <script src="mockApi.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
