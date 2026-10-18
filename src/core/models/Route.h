@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <unordered_map>
 #include "BusStop.h"
 
 using namespace std;
@@ -15,6 +16,12 @@ private:
     vector<BusStop> stops;
     vector<double> travelTimes;
 
+    
+    unordered_map<string, int> stopIndex;
+
+    
+    vector<double> prefixTime;
+
 public:
 
     Route(string routeID);
@@ -26,6 +33,12 @@ public:
     vector<double> getTravelTimes() const;
 
     string getRouteId() const;
+
+   
+    int getStopIndex(string stopID) const;
+
+   
+    double timeBetween(int fromIndex, int toIndex) const;
 };
 
 #endif
