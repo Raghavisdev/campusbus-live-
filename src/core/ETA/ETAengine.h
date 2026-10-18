@@ -7,6 +7,30 @@
 
 using namespace std;
 
+class ETACalculator
+{
+public:
+
+    virtual double calculate(
+        const Route& route,
+        string currentStopID,
+        string destinationStopID
+    ) const = 0;
+
+    virtual ~ETACalculator() {}
+};
+
+class RouteETA : public ETACalculator
+{
+public:
+
+    double calculate(
+        const Route& route,
+        string currentStopID,
+        string destinationStopID
+    ) const override;
+};
+
 class ETA
 {
 public:
