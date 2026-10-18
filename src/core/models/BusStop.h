@@ -2,17 +2,16 @@
 #define BUSSTOP_H
 
 #include <string>
+#include "Location.h"
 
 using namespace std;
 
-class BusStop
+class BusStop : public Location
 {
 private:
 
     string stopID;
     string stopName;
-    double latitude;
-    double longitude;
 
 public:
 
@@ -25,9 +24,6 @@ public:
 
     string getStopID() const;
     string getStopName() const;
-
-    double getLatitude() const;
-    double getLongitude() const;
 };
 
 #endif

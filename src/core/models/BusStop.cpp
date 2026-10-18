@@ -5,10 +5,8 @@ BusStop::BusStop(
     string stopName,
     double latitude,
     double longitude
-)
+) : Location(latitude, longitude)
 {
-    this->latitude = latitude;
-    this->longitude = longitude;
     this->stopID = stopID;
     this->stopName = stopName;
 }
@@ -21,14 +19,4 @@ string BusStop::getStopID() const
 string BusStop::getStopName() const
 {
     return stopName;
-}
-
-double BusStop::getLatitude() const
-{
-    return latitude;
-}
-
-double BusStop::getLongitude() const
-{
-    return longitude;
 }
