@@ -1,5 +1,27 @@
 #include "ETAEngine.h"
 
+double RouteETA::calculate(
+    const Route& route,
+    string currentStopID,
+    string destinationStopID
+) const
+{
+    int from = route.getStopIndex(currentStopID);
+    int to = route.getStopIndex(destinationStopID);
+
+    if (from == -1 || to == -1)
+    {
+        return -1.0;
+    }
+
+    if (from >= to)
+    {
+        return -1.0;
+    }
+
+    return route.timeBetween(from, to);
+}
+
 double ETA::calculateETA(
     const Graph& graph,
     const Route& route,
@@ -7,40 +29,9 @@ double ETA::calculateETA(
     string destinationStopID
 )
 {
-    vector<BusStop> stops = route.getRoute();
 
-    double totalTime = 0.0;
-    bool started = false;
+    RouteETA routeETA;
+    const ETACalculator& calculator = routeETA;
 
-    for (int i = 0; i < stops.size() - 1; i++)
-    {
-        string from = stops[i].getStopID();
-        string to = stops[i + 1].getStopID();
-
-        if (from == currentStopID)
-        {
-            started = true;
-        }
-
-        if (started)
-        {
-            vector<Edge> neighbours = graph.getNeighbours(from);
-
-            for (int j = 0; j < neighbours.size(); j++)
-            {
-                if (neighbours[j].destination == to)
-                {
-                    totalTime += neighbours[j].traveltime;
-                    break;
-                }
-            }
-        }
-
-        if (to == destinationStopID)
-        {
-            return totalTime;
-        }
-    }
-
-    return -1.0;
+    return calculator.calculate(route, currentStopID, destinationStopID);
 }
