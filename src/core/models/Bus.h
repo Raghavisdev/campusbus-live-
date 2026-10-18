@@ -2,10 +2,11 @@
 #define BUS_H
 
 #include <string>
+#include "Location.h"
 
 using namespace std;
 
-class Bus
+class Bus : public Location
 {
 private:
 
@@ -13,8 +14,6 @@ private:
     string routeID;
     string dispatchTime;
     string lastUpdated;
-    double latitude;
-    double longitude;
     int capacity;
     int occupancy;
 
@@ -33,9 +32,6 @@ public:
 
     string getBusID() const;
     string getRouteID() const;
-
-    double getLatitude() const;
-    double getLongitude() const;
 
     int getCapacity() const;
     int getOccupancy() const;

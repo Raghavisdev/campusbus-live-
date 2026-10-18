@@ -6,8 +6,6 @@ Bus::Bus(string busID, string routeID, int capacity)
     this->routeID = routeID;
     this->capacity = capacity;
 
-    latitude = 0.0;
-    longitude = 0.0;
     occupancy = 0;
     dispatchTime = "";
     lastUpdated = "";
@@ -62,14 +60,4 @@ int Bus::getOccupancy() const
 string Bus::getRouteID() const
 {
     return routeID;
-}
-
-double Bus::getLatitude() const
-{
-    return latitude;
-}
-
-double Bus::getLongitude() const
-{
-    return longitude;
 }

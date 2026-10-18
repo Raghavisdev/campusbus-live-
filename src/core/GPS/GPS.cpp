@@ -1,5 +1,4 @@
 #include "GPS.h"
-#include <cmath>
 
 string GPS::findNearestStop(
     const Route& route,
@@ -12,15 +11,11 @@ string GPS::findNearestStop(
     string nearestStop = "";
     double minDistance = 999999999.0;
 
+    Location busPosition(latitude, longitude);
+
     for (size_t i = 0; i < stops.size(); i++)
     {
-        double latDiff = latitude - stops[i].getLatitude();
-        double longDiff = longitude - stops[i].getLongitude();
-
-        double distance = sqrt(
-            latDiff * latDiff +
-            longDiff * longDiff
-        );
+        double distance = busPosition.distanceTo(stops[i]);
 
         if (distance < minDistance)
         {

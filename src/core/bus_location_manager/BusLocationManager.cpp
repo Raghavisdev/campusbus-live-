@@ -2,7 +2,13 @@
 
 void BusLocationManager::addBus(Bus bus)
 {
+    if (hasBus(bus.getBusID()))
+    {
+        return;
+    }
+
     buses.emplace(bus.getBusID(), bus);
+    busesOnRoute[bus.getRouteID()].push_back(bus.getBusID());
 }
 
 void BusLocationManager::loadBuses(Database& database)
@@ -26,29 +32,68 @@ void BusLocationManager::loadBuses(Database& database)
     }
 }
 
-void BusLocationManager::updateBusLocation(
+bool BusLocationManager::hasBus(string busID) const
+{
+    return buses.find(busID) != buses.end();
+}
+
+bool BusLocationManager::updateBusLocation(
     string busID,
     double latitude,
     double longitude,
     string lastUpdated
 )
 {
+    if (!hasBus(busID))
+    {
+        return false;
+    }
+
+    if (latitude < -90 || latitude > 90 ||
+        longitude < -180 || longitude > 180)
+    {
+        return false;
+    }
+
     buses.at(busID).updateLocation(latitude, longitude);
     buses.at(busID).setLastUpdated(lastUpdated);
+
+    return true;
 }
 
-void BusLocationManager::updateBusOccupancy(string busID)
+bool BusLocationManager::updateBusOccupancy(string busID)
 {
+    if (!hasBus(busID))
+    {
+        return false;
+    }
+
     int occupancy = FlaskClient::getOccupancy(busID);
 
-    if (occupancy != -1)
+    if (occupancy < 0)
     {
-        buses.at(busID).updateOccupancy(occupancy);
+        return false;
     }
+
+    int capacity = buses.at(busID).getCapacity();
+
+    if (occupancy > capacity)
+    {
+        occupancy = capacity;
+    }
+
+    buses.at(busID).updateOccupancy(occupancy);
+
+    return true;
 }
 
 Bus BusLocationManager::getBus(string busID) const
 {
+    if (!hasBus(busID))
+    {
+        return Bus("", "", 0);
+    }
+
     return buses.at(busID);
 }
 
@@ -62,4 +107,16 @@ vector<Bus> BusLocationManager::getAllBuses() const
     }
 
     return allBuses;
+}
+
+vector<string> BusLocationManager::getBusesOnRoute(string routeID) const
+{
+    auto it = busesOnRoute.find(routeID);
+
+    if (it == busesOnRoute.end())
+    {
+        return {};
+    }
+
+    return it->second;
 }
