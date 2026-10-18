@@ -13,23 +13,28 @@ using namespace std;
 class BusLocationManager
 {
 private:
-     unordered_map<string, Bus> buses;
+    unordered_map<string, Bus> buses;
+
+    unordered_map<string, vector<string>> busesOnRoute;
 
 public:
     void addBus(Bus bus);
     void loadBuses(Database& database);
 
-    void updateBusLocation(
+    bool hasBus(string busID) const;
+
+    bool updateBusLocation(
         string busID,
         double latitude,
         double longitude,
         string lastUpdated
     );
 
-    void updateBusOccupancy(string busID);
+    bool updateBusOccupancy(string busID);
 
     Bus getBus(string busID) const;
     vector<Bus> getAllBuses() const;
+    vector<string> getBusesOnRoute(string routeID) const;
 };
 
 #endif
