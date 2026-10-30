@@ -121,7 +121,11 @@ Bus Database::getBusStatus(string busID)
         "SELECT buses.bus_id, "
         "COALESCE(bus_status.current_route_id, buses.route_id), buses.capacity, "
         "bus_status.occupancy, bus_status.latitude, "
-        "bus_status.longitude, bus_status.last_updated "
+        "bus_status.longitude, bus_status.last_updated, "
+        // A bus not heard from for 3 minutes is treated as not available (0)
+        "CASE WHEN (julianday('now') - julianday(bus_status.last_updated)) * 1440 > 3 THEN 0 "
+        "ELSE COALESCE(bus_status.next_stop_order, -1) END, "
+        "COALESCE(bus_status.segment_progress, 0) "
         "FROM buses "
         "JOIN bus_status "
         "ON buses.bus_id = bus_status.bus_id "
@@ -166,11 +170,15 @@ Bus Database::getBusStatus(string busID)
 
     string lastUpdated =(const char*)sqlite3_column_text(statement, 6);
 
+    int nextStopOrder = sqlite3_column_int(statement, 7);
+    double segmentProgress = sqlite3_column_double(statement, 8);
+
     Bus bus(id, routeID, capacity);
 
     bus.updateOccupancy(occupancy);
     bus.updateLocation(latitude, longitude);
     bus.setLastUpdated(lastUpdated);
+    bus.setRoutePosition(nextStopOrder, segmentProgress);
 
     sqlite3_finalize(statement);
 

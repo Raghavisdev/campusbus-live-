@@ -197,10 +197,12 @@ Data: stops and the 30 routes from the route sheet are in `database/data/` (`sto
 ## Live GPS Test (phones as buses)
 
 1. Pin each stop of the test routes in `database/data/coordinates_to_fill.csv` (Google Maps: right-click the stop and copy the coordinates).
-2. `python database/compute_segments.py`: road distance and drive time between stops (OSRM estimates).
+2. `python database/compute_segments.py` (road distance and drive time between stops) and `python database/compute_shapes.py` (road line of each route and each stop's km along it), both from OSRM.
 3. `python database/init_db.py`
 4. `python vision/app.py --lan` (phones must be on the same Wi-Fi; allow Python through Windows Firewall).
 5. On each phone install Traccar Client. Server URL: `http://<laptop-ip>:5000/api/gps`. Device identifier: `bus-r30` or `bus-r04` (see `devices` in `database/seed.sql`). Frequency: 5 seconds.
 6. Check the phones are reporting: http://127.0.0.1:5000/api/buses
 
-Prototype limits: segment times are road estimates until replaced with times measured from recorded trips; GPS updates are not yet checked for staleness.
+How a bus is located: each GPS point is projected onto the route's road line (km from the start). km increasing = heading to GEU (`R30`), decreasing = heading back (`R30R`); moves under 30 m are ignored as GPS jitter. A bus more than 200 m from the line, past its last stop, or silent for 3 minutes is not recommended. Wait time = the rest of the current segment + the segments up to the student's stop.
+
+Prototype limits: segment times are OSRM car estimates (faster than a bus) until replaced with times measured from recorded trips; stop coordinates in `coordinates_to_fill.csv` are from Google Maps and marked unverified (see the note column).

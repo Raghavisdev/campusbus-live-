@@ -2,12 +2,19 @@ import json
 import re
 import sqlite3
 import subprocess
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
 from flask import Flask, request, jsonify, send_from_directory
 
 REPO_DIR = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(REPO_DIR / "database"))
+
+from geo import project_near  # noqa: E402
+
+MOVE_THRESHOLD_KM = 0.03   # smaller changes are GPS jitter, not movement
+OFF_ROUTE_KM = 0.2         # further than this from the road line = off route
 FRONTEND_DIR = REPO_DIR / "frontend"
 DATABASE_PATH = REPO_DIR / "database" / "campusbus.db"
 RECOMMEND_EXE = REPO_DIR / "output" / "recommend.exe"
@@ -120,6 +127,63 @@ def recommend():
 
 # ---------- Live GPS from tracker phones ----------
 
+def locate_on_route(bus_id, latitude, longitude):
+    """Project a GPS point onto the bus's road line and work out direction,
+    next stop and progress. Returns the bus_status columns to update."""
+
+    base_route = query_database("SELECT route_id FROM buses WHERE bus_id = ?", (bus_id,))[0][0]
+    shape = query_database(
+        "SELECT latitude, longitude, km FROM route_shapes WHERE route_id = ? ORDER BY seq", (base_route,)
+    )
+
+    # No road line yet: C++ falls back to the nearest stop
+    if not shape:
+        return {"current_route_id": None, "base_km": None, "next_stop_order": None,
+                "segment_progress": None, "off_route_m": None}
+
+    points = [(lat, lon) for lat, lon, _ in shape]
+    kms = [km for _, _, km in shape]
+    total_km = kms[-1]
+
+    previous = query_database("SELECT base_km, current_route_id FROM bus_status WHERE bus_id = ?", (bus_id,))
+    previous_km, previous_route = previous[0] if previous else (None, None)
+
+    base_km, off_km, _ = project_near(points, kms, latitude, longitude, previous_km)
+
+    # Direction from consecutive positions: km increasing = towards GEU
+    current_route = previous_route or base_route
+    if previous_km is not None:
+        if base_km - previous_km > MOVE_THRESHOLD_KM:
+            current_route = base_route
+        elif previous_km - base_km > MOVE_THRESHOLD_KM:
+            current_route = base_route + "R"
+
+    route_km = base_km if current_route == base_route else total_km - base_km
+
+    stops = query_database(
+        "SELECT rs.stop_order, rs.km, s.radius_m FROM route_stops rs JOIN bus_stops s USING (stop_id) "
+        "WHERE rs.route_id = ? ORDER BY rs.stop_order",
+        (current_route,),
+    )
+
+    # 0 = not available for students (off route, or past the last stop)
+    next_stop, progress = 0, 0.0
+
+    if off_km <= OFF_ROUTE_KM:
+        for index, (order, stop_km, radius_m) in enumerate(stops):
+            if abs(route_km - stop_km) * 1000 <= radius_m:
+                next_stop, progress = order, 1.0          # at this stop now
+                break
+            if stop_km > route_km:
+                next_stop = order
+                if index > 0:
+                    previous_stop_km = stops[index - 1][1]
+                    progress = (route_km - previous_stop_km) / (stop_km - previous_stop_km)
+                break
+
+    return {"current_route_id": current_route, "base_km": round(base_km, 4), "next_stop_order": next_stop,
+            "segment_progress": round(progress, 3), "off_route_m": round(off_km * 1000)}
+
 @app.route("/api/gps", methods=["GET", "POST"])
 def gps():
     """Accepts the Traccar Client (OsmAnd) format:
@@ -162,21 +226,28 @@ def gps():
         except (ValueError, OverflowError, OSError):
             pass
 
+    position = locate_on_route(bus_id, latitude, longitude)
+
     write_database([
         (
             "INSERT INTO bus_locations (bus_id, latitude, longitude, speed_kmh, recorded_at) VALUES (?, ?, ?, ?, ?)",
             (bus_id, latitude, longitude, speed_kmh, recorded_at),
         ),
         (
-            "INSERT INTO bus_status (bus_id, occupancy, latitude, longitude, speed_kmh, last_updated) "
-            "VALUES (?, 0, ?, ?, ?, ?) "
+            "INSERT INTO bus_status (bus_id, occupancy, latitude, longitude, speed_kmh, last_updated, "
+            "current_route_id, base_km, next_stop_order, segment_progress, off_route_m) "
+            "VALUES (?, 0, ?, ?, ?, ?, ?, ?, ?, ?, ?) "
             "ON CONFLICT(bus_id) DO UPDATE SET latitude = excluded.latitude, longitude = excluded.longitude, "
-            "speed_kmh = excluded.speed_kmh, last_updated = excluded.last_updated",
-            (bus_id, latitude, longitude, speed_kmh, recorded_at),
+            "speed_kmh = excluded.speed_kmh, last_updated = excluded.last_updated, "
+            "current_route_id = excluded.current_route_id, base_km = excluded.base_km, "
+            "next_stop_order = excluded.next_stop_order, segment_progress = excluded.segment_progress, "
+            "off_route_m = excluded.off_route_m",
+            (bus_id, latitude, longitude, speed_kmh, recorded_at, position["current_route_id"], position["base_km"],
+             position["next_stop_order"], position["segment_progress"], position["off_route_m"]),
         ),
     ])
 
-    return jsonify({"ok": True, "bus": bus_id, "recorded_at": recorded_at})
+    return jsonify({"ok": True, "bus": bus_id, "recorded_at": recorded_at, **position})
 
 
 @app.route("/api/buses", methods=["GET"])
@@ -185,11 +256,12 @@ def buses():
 
     rows = query_database(
         "SELECT b.bus_id, COALESCE(s.current_route_id, b.route_id), s.latitude, s.longitude, "
-        "s.speed_kmh, s.occupancy, b.capacity, s.last_updated "
+        "s.speed_kmh, s.occupancy, b.capacity, s.last_updated, s.next_stop_order, s.segment_progress, s.off_route_m "
         "FROM buses b LEFT JOIN bus_status s ON s.bus_id = b.bus_id WHERE b.active = 1 ORDER BY b.bus_id"
     )
 
-    keys = ["bus", "route", "lat", "lon", "speed_kmh", "occupancy", "capacity", "last_updated"]
+    keys = ["bus", "route", "lat", "lon", "speed_kmh", "occupancy", "capacity", "last_updated",
+            "next_stop_order", "segment_progress", "off_route_m"]
     return jsonify([dict(zip(keys, row)) for row in rows])
 
 

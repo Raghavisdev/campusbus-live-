@@ -1,24 +1,24 @@
-stop_id,stop_name,routes,latitude,longitude,google_maps_search
-S9,Daudwala,R04,,,https://www.google.com/maps/search/Daudwala%2C%20Dehradun
-S10,Mathurawala,R04,,,https://www.google.com/maps/search/Mathurawala%2C%20Dehradun
-S11,Siddeshwar,R04,,,https://www.google.com/maps/search/Siddeshwar%2C%20Dehradun
-S12,Bangali Kothi,R04,,,https://www.google.com/maps/search/Bangali%20Kothi%2C%20Dehradun
-S13,Kargi Chowk,R04,,,https://www.google.com/maps/search/Kargi%20Chowk%2C%20Dehradun
-S7,ISBT,R04,,,https://www.google.com/maps/search/ISBT%2C%20Dehradun
-S1,GEU,R04 R27 R28 R29 R30,,,https://www.google.com/maps/search/GEU%2C%20Dehradun
-S69,Vikasnagar,R27,,,https://www.google.com/maps/search/Vikasnagar%2C%20Dehradun
-S70,Tehsil,R27,,,https://www.google.com/maps/search/Tehsil%2C%20Dehradun
-S71,Harbatpur Chowk,R27,,,https://www.google.com/maps/search/Harbatpur%20Chowk%2C%20Dehradun
-S72,Langa Road,R27,,,https://www.google.com/maps/search/Langa%20Road%2C%20Dehradun
-S73,Shaspur,R27,,,https://www.google.com/maps/search/Shaspur%2C%20Dehradun
-S74,Selaqui,R27,,,https://www.google.com/maps/search/Selaqui%2C%20Dehradun
-S75,Sudhowala,R27 R28 R29,,,https://www.google.com/maps/search/Sudhowala%2C%20Dehradun
-S76,Nanda Ki Chowki,R27 R28 R29,,,https://www.google.com/maps/search/Nanda%20Ki%20Chowki%2C%20Dehradun
-S77,Prem Nagar,R27 R28 R29 R30,,,https://www.google.com/maps/search/Prem%20Nagar%2C%20Dehradun
-S78,Panditwari,R27 R28 R29 R30,,,https://www.google.com/maps/search/Panditwari%2C%20Dehradun
-S79,Vasant Vihar,R27 R28 R29,,,https://www.google.com/maps/search/Vasant%20Vihar%2C%20Dehradun
-S80,Baliwala Chowk,R27 R28 R29 R30,,,https://www.google.com/maps/search/Baliwala%20Chowk%2C%20Dehradun
-S39,GMS Road,R27 R28 R29 R30,,,https://www.google.com/maps/search/GMS%20Road%2C%20Dehradun
-S81,Selaqui Chowk,R28,,,https://www.google.com/maps/search/Selaqui%20Chowk%2C%20Dehradun
-S82,Bhauwala Chowk,R29,,,https://www.google.com/maps/search/Bhauwala%20Chowk%2C%20Dehradun
-S83,Manduwala,R29,,,https://www.google.com/maps/search/Manduwala%2C%20Dehradun
+stop_id,stop_name,routes,latitude,longitude,verified,note,google_maps_search
+S9,Daudwala,R04,30.2542161,78.0295273,0,Daudwala (Mothrowala area),https://www.google.com/maps/search/Daudwala%2C%20Dehradun
+S10,Mathurawala,R04,30.2617154,78.0338078,0,"INFERRED: sheet says Mathurawala, Google has Mothrowala",https://www.google.com/maps/search/Mathurawala%2C%20Dehradun
+S11,Siddeshwar,R04,30.2793328,78.0372133,0,"INFERRED: Shree Siddheshwar Mahadev Temple, fits between Mothrowala and Bangali Kothi",https://www.google.com/maps/search/Siddeshwar%2C%20Dehradun
+S12,Bangali Kothi,R04,30.2850242,78.039678,0,Bengali Kothi,https://www.google.com/maps/search/Bangali%20Kothi%2C%20Dehradun
+S13,Kargi Chowk,R04,30.2908871,78.0247115,0,Kargi Chowk,https://www.google.com/maps/search/Kargi%20Chowk%2C%20Dehradun
+S7,ISBT,R04,30.2891887,77.9986668,0,ISBT Dehradun,https://www.google.com/maps/search/ISBT%2C%20Dehradun
+S1,GEU,R04 R27 R28 R29 R30,30.2688994,77.9931391,0,Graphic Era Deemed to be University,https://www.google.com/maps/search/GEU%2C%20Dehradun
+S69,Vikasnagar,R27,30.4711227,77.7753138,0,Vikasnagar bus stop,https://www.google.com/maps/search/Vikasnagar%2C%20Dehradun
+S70,Tehsil,R27,30.4532974,77.754045,0,INFERRED: Vikasnagar Tehsil (SDM office),https://www.google.com/maps/search/Tehsil%2C%20Dehradun
+S71,Harbatpur Chowk,R27,30.4382863,77.7366242,0,"INFERRED: Herbertpur town centre, exact chowk not found",https://www.google.com/maps/search/Harbatpur%20Chowk%2C%20Dehradun
+S72,Langa Road,R27,30.4213642,77.8055309,0,"ROAD: point on Langha Rd, pick the actual stop",https://www.google.com/maps/search/Langa%20Road%2C%20Dehradun
+S73,Shaspur,R27,30.3927124,77.8095661,0,"INFERRED: sheet says Shaspur, Google has Sahaspur",https://www.google.com/maps/search/Shaspur%2C%20Dehradun
+S74,Selaqui,R27,30.3681585,77.8653126,0,INFERRED: Selakui (Selaqui) area,https://www.google.com/maps/search/Selaqui%2C%20Dehradun
+S75,Sudhowala,R27 R28 R29,30.3450839,77.9361588,0,Sudhowala,https://www.google.com/maps/search/Sudhowala%2C%20Dehradun
+S76,Nanda Ki Chowki,R27 R28 R29,30.3445621,77.9545906,0,Nanda Ki Chowki,https://www.google.com/maps/search/Nanda%20Ki%20Chowki%2C%20Dehradun
+S77,Prem Nagar,R27 R28 R29 R30,30.3361162,77.9635208,0,Prem Nagar Chowk,https://www.google.com/maps/search/Prem%20Nagar%2C%20Dehradun
+S78,Panditwari,R27 R28 R29 R30,30.3300906,77.9881334,0,Panditwari,https://www.google.com/maps/search/Panditwari%2C%20Dehradun
+S79,Vasant Vihar,R27 R28 R29,30.3226277,78.0036994,0,"INFERRED: Vasant Vihar (2 results, took the one on the route)",https://www.google.com/maps/search/Vasant%20Vihar%2C%20Dehradun
+S80,Baliwala Chowk,R27 R28 R29 R30,30.3239145,78.0113332,0,Balliwala Chowk,https://www.google.com/maps/search/Baliwala%20Chowk%2C%20Dehradun
+S39,GMS Road,R27 R28 R29 R30,30.3006578,78.0026799,0,GMS Road boarding point at Olympus High School (road is ~3 km long),https://www.google.com/maps/search/GMS%20Road%2C%20Dehradun
+S81,Selaqui Chowk,R28,30.3681585,77.8653126,0,INFERRED: same point as Selaqui until confirmed,https://www.google.com/maps/search/Selaqui%20Chowk%2C%20Dehradun
+S82,Bhauwala Chowk,R29,30.3972299,77.918174,0,"INFERRED: Bhauwala village centre, exact chowk not found",https://www.google.com/maps/search/Bhauwala%20Chowk%2C%20Dehradun
+S83,Manduwala,R29,30.3880099,77.9410251,0,Manduwala,https://www.google.com/maps/search/Manduwala%2C%20Dehradun

@@ -17,6 +17,12 @@ private:
     int capacity;
     int occupancy;
 
+    // Position on the route's road line (set from the GPS endpoint's result):
+    // -1 = unknown (no road line), 0 = not available (off route / stale / finished),
+    // 1.. = next stop ahead (1-based stop order)
+    int nextStopOrder;
+    double segmentProgress;
+
 public:
 
     Bus(string busID, string routeID, int capacity);
@@ -35,6 +41,10 @@ public:
 
     int getCapacity() const;
     int getOccupancy() const;
+
+    void setRoutePosition(int nextStopOrder, double segmentProgress);
+    int getNextStopOrder() const;
+    double getSegmentProgress() const;
 };
 
 #endif

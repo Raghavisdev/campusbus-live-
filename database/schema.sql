@@ -8,6 +8,7 @@ PRAGMA foreign_keys = ON;
 DROP TABLE IF EXISTS occupancy_log;
 DROP TABLE IF EXISTS bus_locations;
 DROP TABLE IF EXISTS devices;
+DROP TABLE IF EXISTS route_shapes;
 DROP TABLE IF EXISTS route_segments;
 DROP TABLE IF EXISTS bus_status;
 DROP TABLE IF EXISTS buses;
@@ -29,7 +30,9 @@ CREATE TABLE bus_stops (
     stop_name TEXT NOT NULL UNIQUE,
     latitude REAL,
     longitude REAL,
-    verified INTEGER NOT NULL DEFAULT 0
+    verified INTEGER NOT NULL DEFAULT 0,
+    -- a bus within this distance counts as "at the stop"
+    radius_m REAL NOT NULL DEFAULT 150
 );
 
 -- Every route exists twice: to_geu (morning, from the sheet) and
@@ -46,6 +49,8 @@ CREATE TABLE route_stops (
     route_id TEXT NOT NULL,
     stop_order INTEGER NOT NULL,
     stop_id TEXT NOT NULL,
+    -- distance along the route's road line (NULL until the shape is known)
+    km REAL,
 
     PRIMARY KEY (route_id, stop_order),
 
@@ -69,6 +74,18 @@ CREATE TABLE route_segments (
     FOREIGN KEY (to_stop_id) REFERENCES bus_stops(stop_id)
 );
 
+-- Road line of each route (from OSRM), with distance from the route start
+CREATE TABLE route_shapes (
+    route_id TEXT NOT NULL,
+    seq INTEGER NOT NULL,
+    latitude REAL NOT NULL,
+    longitude REAL NOT NULL,
+    km REAL NOT NULL,
+
+    PRIMARY KEY (route_id, seq),
+    FOREIGN KEY (route_id) REFERENCES routes(route_id)
+);
+
 -- One bus per route; route_id is its morning (to_geu) route
 CREATE TABLE buses (
     bus_id TEXT PRIMARY KEY,
@@ -87,6 +104,11 @@ CREATE TABLE bus_status (
     longitude REAL NOT NULL,
     speed_kmh REAL,
     last_updated TEXT NOT NULL,
+    -- position on the road line, filled in by the GPS endpoint
+    base_km REAL,              -- km along the to_geu line (used to detect direction)
+    next_stop_order INTEGER,   -- next stop ahead on current_route_id (1-based)
+    segment_progress REAL,     -- 0..1 of the way from the previous stop to the next
+    off_route_m REAL,          -- distance from the road line
     FOREIGN KEY (bus_id) REFERENCES buses(bus_id),
     FOREIGN KEY (current_route_id) REFERENCES routes(route_id)
 );

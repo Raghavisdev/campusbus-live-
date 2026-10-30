@@ -6,12 +6,18 @@
 #include <fstream>
 #include <vector>
 #include <string>
+#include <cmath>
 
 #include "src/core/database/database.h"
 #include "src/core/bus_location_manager/BusLocationManager.h"
 #include "src/core/bus_recommendation/BusRecommendation.h"
 
 using namespace std;
+
+double roundMinutes(double minutes)
+{
+    return round(minutes * 10.0) / 10.0;
+}
 
 void printError(string message)
 {
@@ -93,9 +99,9 @@ int main(int argc, char* argv[])
     cout << "{\"ok\": true"
          << ", \"bus\": \"" << result.bus.getBusID() << "\""
          << ", \"route\": \"" << result.bus.getRouteID() << "\""
-         << ", \"wait_min\": " << result.waitTime
-         << ", \"ride_min\": " << result.rideTime
-         << ", \"eta_min\": " << result.waitTime + result.rideTime
+         << ", \"wait_min\": " << roundMinutes(result.waitTime)
+         << ", \"ride_min\": " << roundMinutes(result.rideTime)
+         << ", \"eta_min\": " << roundMinutes(result.waitTime + result.rideTime)
          << ", \"seats_left\": " << seatsLeft
          << "}" << endl;
 

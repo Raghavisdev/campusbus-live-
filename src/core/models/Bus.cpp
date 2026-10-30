@@ -9,6 +9,9 @@ Bus::Bus(string busID, string routeID, int capacity)
     occupancy = 0;
     dispatchTime = "";
     lastUpdated = "";
+
+    nextStopOrder = -1;
+    segmentProgress = 0.0;
 }
 
 void Bus::updateLocation(double latitude, double longitude)
@@ -60,4 +63,20 @@ int Bus::getOccupancy() const
 string Bus::getRouteID() const
 {
     return routeID;
+}
+
+void Bus::setRoutePosition(int nextStopOrder, double segmentProgress)
+{
+    this->nextStopOrder = nextStopOrder;
+    this->segmentProgress = segmentProgress;
+}
+
+int Bus::getNextStopOrder() const
+{
+    return nextStopOrder;
+}
+
+double Bus::getSegmentProgress() const
+{
+    return segmentProgress;
 }
