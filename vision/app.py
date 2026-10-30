@@ -311,11 +311,18 @@ def gps():
             pass
 
     position = locate_on_route(bus_id, latitude, longitude)
-    position["pace_ratio"] = measure_pace(bus_id, position, recorded_at)
 
-    # Time standing at a stop is not counted in the pace (only moving between stops)
+    # Pace is only measured while driving the route: not standing at a stop,
+    # not off route (e.g. at home or the depot), not past the last stop
     at_stop = position["segment_progress"] == 1.0
-    pace_point = None if at_stop else position["planned_min"]
+    off_route = position["next_stop_order"] == 0
+
+    if off_route:
+        position["pace_ratio"] = 1.0   # start fresh when the bus rejoins the route
+    else:
+        position["pace_ratio"] = measure_pace(bus_id, position, recorded_at)
+
+    pace_point = None if at_stop or off_route else position["planned_min"]
 
     write_database([
         (

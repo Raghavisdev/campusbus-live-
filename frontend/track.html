@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CampusBus Live - Bus Tracker</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="container">
+    <header class="brand">
+      <h1>Bus Tracker</h1>
+      <p class="subtitle">This phone sends its location as the bus GPS</p>
+    </header>
+
+    <form id="trackForm" class="card">
+      <label for="device">Bus</label>
+      <select id="device">
+        <option value="bus-r04">R04 (bus-r04)</option>
+        <option value="bus-r30">R30 (bus-r30)</option>
+        <option value="bus-r03">R03 (bus-r03)</option>
+      </select>
+      <button type="submit" id="startButton">Start sharing location</button>
+    </form>
+
+    <section class="card" aria-live="polite">
+      <ul class="bus-details">
+        <li><span>Status</span><strong id="status">Not started</strong></li>
+        <li><span>Updates sent</span><strong id="sent">0</strong></li>
+        <li><span>Last position</span><strong id="position">-</strong></li>
+        <li><span>Next stop</span><strong id="nextStop">-</strong></li>
+      </ul>
+    </section>
+
+    <p class="note">Keep this page open and the screen on while the bus is moving.</p>
+  </main>
+
+  <script>
+    // Sends this phone's GPS to /api/gps (same format as the Traccar Client app).
+    // Browsers only share location on HTTPS pages, e.g. through the tunnel address.
+    const SEND_EVERY_MS = 5000;
+
+    let watchId = null;
+    let latest = null;
+    let sent = 0;
+    let timer = null;
+
+    const statusText = document.getElementById("status");
+
+    async function sendLatest() {
+      if (!latest) return;
+      const device = document.getElementById("device").value;
+      const query = new URLSearchParams({
+        id: device,
+        lat: latest.coords.latitude,
+        lon: latest.coords.longitude,
+        timestamp: Math.floor(latest.timestamp / 1000)
+      });
+      if (latest.coords.speed !== null) {
+        query.set("speed", latest.coords.speed * 1.943844); // m/s -> knots
+      }
+
+      try {
+        const response = await fetch("/api/gps?" + query.toString());
+        const result = await response.json();
+        if (!result.ok) {
+          statusText.textContent = result.error;
+          return;
+        }
+        sent += 1;
+        document.getElementById("sent").textContent = sent;
+        statusText.textContent = "Sharing (" + result.current_route_id + ")";
+        document.getElementById("nextStop").textContent =
+          result.next_stop_order ? "stop " + result.next_stop_order + (result.segment_progress === 1 ? " (at stop)" : "") : "off route";
+      } catch (error) {
+        statusText.textContent = "Cannot reach server";
+      }
+    }
+
+    document.getElementById("trackForm").addEventListener("submit", (event) => {
+      event.preventDefault();
+
+      if (watchId !== null) {
+        navigator.geolocation.clearWatch(watchId);
+        clearInterval(timer);
+        watchId = null;
+        statusText.textContent = "Stopped";
+        document.getElementById("startButton").textContent = "Start sharing location";
+        return;
+      }
+
+      if (!("geolocation" in navigator)) {
+        statusText.textContent = "This browser has no GPS access";
+        return;
+      }
+
+      statusText.textContent = "Waiting for GPS...";
+      watchId = navigator.geolocation.watchPosition(
+        (position) => {
+          latest = position;
+          document.getElementById("position").textContent =
+            position.coords.latitude.toFixed(5) + ", " + position.coords.longitude.toFixed(5) +
+            " (±" + Math.round(position.coords.accuracy) + " m)";
+        },
+        (error) => { statusText.textContent = "GPS error: " + error.message; },
+        { enableHighAccuracy: true, maximumAge: 0, timeout: 20000 }
+      );
+      timer = setInterval(sendLatest, SEND_EVERY_MS);
+      document.getElementById("startButton").textContent = "Stop sharing";
+    });
+  </script>
+</body>
+</html>
