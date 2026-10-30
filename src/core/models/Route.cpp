@@ -8,7 +8,9 @@ Route::Route(string routeID)
 void Route::addstop(BusStop stop)
 {
     stops.push_back(stop);
-    stopIndex[stop.getStopID()] = stops.size() - 1;
+
+    // A route can pass the same stop twice; keep its first position
+    stopIndex.insert({stop.getStopID(), (int)stops.size() - 1});
   
     if (prefixTime.empty())
     {
@@ -23,7 +25,7 @@ void Route::addstop(BusStop stop)
 void Route::addstop(BusStop stop, double travelTime)
 {
     stops.push_back(stop);
-    stopIndex[stop.getStopID()] = stops.size() - 1;
+    stopIndex.insert({stop.getStopID(), (int)stops.size() - 1});
 
     // Travel time is required only between stops.
     // The first stop does not have a previous stop.

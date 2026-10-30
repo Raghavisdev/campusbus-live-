@@ -1,0 +1,24 @@
+stop_id,stop_name,routes,latitude,longitude,google_maps_search
+S9,Daudwala,R04,,,https://www.google.com/maps/search/Daudwala%2C%20Dehradun
+S10,Mathurawala,R04,,,https://www.google.com/maps/search/Mathurawala%2C%20Dehradun
+S11,Siddeshwar,R04,,,https://www.google.com/maps/search/Siddeshwar%2C%20Dehradun
+S12,Bangali Kothi,R04,,,https://www.google.com/maps/search/Bangali%20Kothi%2C%20Dehradun
+S13,Kargi Chowk,R04,,,https://www.google.com/maps/search/Kargi%20Chowk%2C%20Dehradun
+S7,ISBT,R04,,,https://www.google.com/maps/search/ISBT%2C%20Dehradun
+S1,GEU,R04 R27 R28 R29 R30,,,https://www.google.com/maps/search/GEU%2C%20Dehradun
+S69,Vikasnagar,R27,,,https://www.google.com/maps/search/Vikasnagar%2C%20Dehradun
+S70,Tehsil,R27,,,https://www.google.com/maps/search/Tehsil%2C%20Dehradun
+S71,Harbatpur Chowk,R27,,,https://www.google.com/maps/search/Harbatpur%20Chowk%2C%20Dehradun
+S72,Langa Road,R27,,,https://www.google.com/maps/search/Langa%20Road%2C%20Dehradun
+S73,Shaspur,R27,,,https://www.google.com/maps/search/Shaspur%2C%20Dehradun
+S74,Selaqui,R27,,,https://www.google.com/maps/search/Selaqui%2C%20Dehradun
+S75,Sudhowala,R27 R28 R29,,,https://www.google.com/maps/search/Sudhowala%2C%20Dehradun
+S76,Nanda Ki Chowki,R27 R28 R29,,,https://www.google.com/maps/search/Nanda%20Ki%20Chowki%2C%20Dehradun
+S77,Prem Nagar,R27 R28 R29 R30,,,https://www.google.com/maps/search/Prem%20Nagar%2C%20Dehradun
+S78,Panditwari,R27 R28 R29 R30,,,https://www.google.com/maps/search/Panditwari%2C%20Dehradun
+S79,Vasant Vihar,R27 R28 R29,,,https://www.google.com/maps/search/Vasant%20Vihar%2C%20Dehradun
+S80,Baliwala Chowk,R27 R28 R29 R30,,,https://www.google.com/maps/search/Baliwala%20Chowk%2C%20Dehradun
+S39,GMS Road,R27 R28 R29 R30,,,https://www.google.com/maps/search/GMS%20Road%2C%20Dehradun
+S81,Selaqui Chowk,R28,,,https://www.google.com/maps/search/Selaqui%20Chowk%2C%20Dehradun
+S82,Bhauwala Chowk,R29,,,https://www.google.com/maps/search/Bhauwala%20Chowk%2C%20Dehradun
+S83,Manduwala,R29,,,https://www.google.com/maps/search/Manduwala%2C%20Dehradun

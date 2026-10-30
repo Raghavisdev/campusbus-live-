@@ -192,4 +192,15 @@ Request flow: browser -> Flask (`/api/login`, `/api/stops`, `/api/recommend`) ->
 
 Optional camera occupancy: `python vision/person_detection.py` (posts counts to `/update-occupancy`).
 
-Prototype limits: bus positions and occupancy come from mock data in `database/seed.sql`; the camera count is not yet written to SQLite.
+Data: stops and the 30 routes from the route sheet are in `database/data/` (`stops.csv`, `routes.csv`). Every route is stored twice: towards GEU (`R30`) and back from GEU (`R30R`). Edit the CSV files, then rerun `python database/init_db.py`.
+
+## Live GPS Test (phones as buses)
+
+1. Pin each stop of the test routes in `database/data/coordinates_to_fill.csv` (Google Maps: right-click the stop and copy the coordinates).
+2. `python database/compute_segments.py`: road distance and drive time between stops (OSRM estimates).
+3. `python database/init_db.py`
+4. `python vision/app.py --lan` (phones must be on the same Wi-Fi; allow Python through Windows Firewall).
+5. On each phone install Traccar Client. Server URL: `http://<laptop-ip>:5000/api/gps`. Device identifier: `bus-r30` or `bus-r04` (see `devices` in `database/seed.sql`). Frequency: 5 seconds.
+6. Check the phones are reporting: http://127.0.0.1:5000/api/buses
+
+Prototype limits: segment times are road estimates until replaced with times measured from recorded trips; GPS updates are not yet checked for staleness.

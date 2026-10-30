@@ -118,7 +118,8 @@ vector<Bus> Database::getAllBuses()
 Bus Database::getBusStatus(string busID)
 {
     string query =
-        "SELECT buses.bus_id, buses.route_id, buses.capacity, "
+        "SELECT buses.bus_id, "
+        "COALESCE(bus_status.current_route_id, buses.route_id), buses.capacity, "
         "bus_status.occupancy, bus_status.latitude, "
         "bus_status.longitude, bus_status.last_updated "
         "FROM buses "
