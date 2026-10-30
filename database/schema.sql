@@ -109,6 +109,8 @@ CREATE TABLE bus_status (
     next_stop_order INTEGER,   -- next stop ahead on current_route_id (1-based)
     segment_progress REAL,     -- 0..1 of the way from the previous stop to the next
     off_route_m REAL,          -- distance from the road line
+    planned_min REAL,          -- planned minutes from the route start to the bus position, P(s)
+    pace_ratio REAL,           -- actual / planned time over the last few minutes (1 = on plan)
     FOREIGN KEY (bus_id) REFERENCES buses(bus_id),
     FOREIGN KEY (current_route_id) REFERENCES routes(route_id)
 );
@@ -128,6 +130,8 @@ CREATE TABLE bus_locations (
     longitude REAL NOT NULL,
     speed_kmh REAL,
     recorded_at TEXT NOT NULL,
+    route_id TEXT,             -- trip direction when recorded
+    planned_min REAL,          -- P(s) at this point, used to measure pace
     FOREIGN KEY (bus_id) REFERENCES buses(bus_id)
 );
 

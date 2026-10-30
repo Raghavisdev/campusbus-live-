@@ -12,6 +12,7 @@ Bus::Bus(string busID, string routeID, int capacity)
 
     nextStopOrder = -1;
     segmentProgress = 0.0;
+    paceRatio = 1.0;
 }
 
 void Bus::updateLocation(double latitude, double longitude)
@@ -79,4 +80,14 @@ int Bus::getNextStopOrder() const
 double Bus::getSegmentProgress() const
 {
     return segmentProgress;
+}
+
+void Bus::setPaceRatio(double paceRatio)
+{
+    this->paceRatio = paceRatio;
+}
+
+double Bus::getPaceRatio() const
+{
+    return paceRatio;
 }

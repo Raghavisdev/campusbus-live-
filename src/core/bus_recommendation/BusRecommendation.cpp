@@ -1,4 +1,18 @@
 #include "BusRecommendation.h"
+#include <cmath>
+
+// How quickly the bus's current pace stops mattering further ahead (minutes)
+const double PACE_FADE_MINUTES = 5.0;
+
+// Planned minutes ahead, corrected by the bus's current pace r. The correction
+// applies fully to the road just ahead and fades exponentially further on:
+//   adjusted = planned + (r - 1) * T0 * (1 - e^(-planned / T0))
+static double paceAdjusted(double plannedMinutes, double paceRatio)
+{
+    return plannedMinutes
+        + (paceRatio - 1.0) * PACE_FADE_MINUTES
+        * (1.0 - exp(-plannedMinutes / PACE_FADE_MINUTES));
+}
 
 Bus BusRecommendation::recommend(
     const BusLocationManager& manager,
@@ -144,14 +158,18 @@ Recommendation BusRecommendation::recommendLive(
                 waitTime = routes[j].timeBetween(busIndex, studentIndex);
             }
 
-            double total = waitTime + rideTime;
+            // waitTime and rideTime so far are planned minutes; adjust both for
+            // how the bus is actually moving (the ride starts after the wait)
+            double pace = bus.getPaceRatio();
+            double adjustedWait = paceAdjusted(waitTime, pace);
+            double total = paceAdjusted(waitTime + rideTime, pace);
 
             if (total < bestTotal)
             {
                 bestTotal = total;
                 best.bus = bus;
-                best.waitTime = waitTime;
-                best.rideTime = rideTime;
+                best.waitTime = adjustedWait;
+                best.rideTime = total - adjustedWait;
             }
         }
     }

@@ -23,6 +23,9 @@ private:
     int nextStopOrder;
     double segmentProgress;
 
+    // Actual / planned time over the last few minutes (1 = on plan, 2 = twice as slow)
+    double paceRatio;
+
 public:
 
     Bus(string busID, string routeID, int capacity);
@@ -45,6 +48,9 @@ public:
     void setRoutePosition(int nextStopOrder, double segmentProgress);
     int getNextStopOrder() const;
     double getSegmentProgress() const;
+
+    void setPaceRatio(double paceRatio);
+    double getPaceRatio() const;
 };
 
 #endif

@@ -3,7 +3,7 @@ import re
 import sqlite3
 import subprocess
 import sys
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from flask import Flask, request, jsonify, send_from_directory
@@ -15,6 +15,12 @@ from geo import project_near  # noqa: E402
 
 MOVE_THRESHOLD_KM = 0.03   # smaller changes are GPS jitter, not movement
 OFF_ROUTE_KM = 0.2         # further than this from the road line = off route
+
+# Pace = actual time / planned time over a recent window (see README "How the ETA is calculated")
+PACE_WINDOW_MIN = 5.0      # look back this far
+PACE_MIN_HISTORY = 1.0     # need at least this much history before measuring
+PACE_SMOOTHING = 0.3       # weight of the newest measurement
+PACE_LIMITS = (0.6, 3.0)   # ignore implausible values
 FRONTEND_DIR = REPO_DIR / "frontend"
 DATABASE_PATH = REPO_DIR / "database" / "campusbus.db"
 RECOMMEND_EXE = REPO_DIR / "output" / "recommend.exe"
@@ -139,7 +145,7 @@ def locate_on_route(bus_id, latitude, longitude):
     # No road line yet: C++ falls back to the nearest stop
     if not shape:
         return {"current_route_id": None, "base_km": None, "next_stop_order": None,
-                "segment_progress": None, "off_route_m": None}
+                "segment_progress": None, "off_route_m": None, "planned_min": None}
 
     points = [(lat, lon) for lat, lon, _ in shape]
     kms = [km for _, _, km in shape]
@@ -161,7 +167,7 @@ def locate_on_route(bus_id, latitude, longitude):
     route_km = base_km if current_route == base_route else total_km - base_km
 
     stops = query_database(
-        "SELECT rs.stop_order, rs.km, s.radius_m FROM route_stops rs JOIN bus_stops s USING (stop_id) "
+        "SELECT rs.stop_order, rs.km, s.radius_m, rs.stop_id FROM route_stops rs JOIN bus_stops s USING (stop_id) "
         "WHERE rs.route_id = ? ORDER BY rs.stop_order",
         (current_route,),
     )
@@ -170,7 +176,7 @@ def locate_on_route(bus_id, latitude, longitude):
     next_stop, progress = 0, 0.0
 
     if off_km <= OFF_ROUTE_KM:
-        for index, (order, stop_km, radius_m) in enumerate(stops):
+        for index, (order, stop_km, radius_m, _) in enumerate(stops):
             if abs(route_km - stop_km) * 1000 <= radius_m:
                 next_stop, progress = order, 1.0          # at this stop now
                 break
@@ -182,7 +188,69 @@ def locate_on_route(bus_id, latitude, longitude):
                 break
 
     return {"current_route_id": current_route, "base_km": round(base_km, 4), "next_stop_order": next_stop,
-            "segment_progress": round(progress, 3), "off_route_m": round(off_km * 1000)}
+            "segment_progress": round(progress, 3), "off_route_m": round(off_km * 1000),
+            "planned_min": planned_minutes(current_route, stops, route_km)}
+
+
+def planned_minutes(route_id, stops, route_km):
+    """P(s): planned minutes from the route start to position route_km,
+    interpolated linearly inside a segment. None if segment times are missing."""
+
+    times = dict(
+        ((from_stop, to_stop), minutes)
+        for from_stop, to_stop, minutes in query_database(
+            "SELECT from_stop_id, to_stop_id, travel_time_min FROM route_segments WHERE route_id = ?", (route_id,)
+        )
+    )
+
+    elapsed = 0.0
+    for (_, km_a, _, stop_a), (_, km_b, _, stop_b) in zip(stops, stops[1:]):
+        minutes = times.get((stop_a, stop_b))
+        if minutes is None or km_a is None or km_b is None:
+            return None
+        if route_km <= km_b:
+            fraction = 0.0 if km_b == km_a else max(0.0, (route_km - km_a) / (km_b - km_a))
+            return round(elapsed + fraction * minutes, 3)
+        elapsed += minutes
+
+    return round(elapsed, 3)
+
+
+def parse_time(text):
+    return datetime.strptime(text, "%Y-%m-%d %H:%M:%S").replace(tzinfo=timezone.utc)
+
+
+def measure_pace(bus_id, position, recorded_at):
+    """Pace ratio r = actual minutes / planned minutes of road covered,
+    over the last PACE_WINDOW_MIN minutes of the same trip, smoothed."""
+
+    previous = query_database("SELECT pace_ratio, current_route_id FROM bus_status WHERE bus_id = ?", (bus_id,))
+    previous_ratio, previous_route = previous[0] if previous else (None, None)
+
+    # New trip direction: start again from "on plan"
+    if previous_ratio is None or previous_route != position["current_route_id"]:
+        previous_ratio = 1.0
+
+    now = parse_time(recorded_at)
+    oldest = query_database(
+        "SELECT recorded_at, planned_min FROM bus_locations "
+        "WHERE bus_id = ? AND route_id = ? AND planned_min IS NOT NULL AND recorded_at >= ? "
+        "ORDER BY recorded_at LIMIT 1",
+        (bus_id, position["current_route_id"],
+         (now - timedelta(minutes=PACE_WINDOW_MIN)).strftime("%Y-%m-%d %H:%M:%S")),
+    )
+
+    if not oldest or position["planned_min"] is None:
+        return previous_ratio
+
+    elapsed_min = (now - parse_time(oldest[0][0])).total_seconds() / 60
+    if elapsed_min < PACE_MIN_HISTORY:
+        return previous_ratio
+
+    planned_covered = max(position["planned_min"] - oldest[0][1], 0.05)
+    ratio = min(max(elapsed_min / planned_covered, PACE_LIMITS[0]), PACE_LIMITS[1])
+
+    return round(PACE_SMOOTHING * ratio + (1 - PACE_SMOOTHING) * previous_ratio, 3)
 
 @app.route("/api/gps", methods=["GET", "POST"])
 def gps():
@@ -192,7 +260,23 @@ def gps():
     """
 
     data = dict(request.values)
-    data.update(request.get_json(silent=True) or {})
+    body = request.get_json(silent=True) or {}
+
+    if isinstance(body.get("location"), dict):
+        # Newer Traccar Client versions post JSON: speed in m/s, ISO timestamp
+        location = body["location"]
+        coords = location.get("coords") or {}
+        data["id"] = body.get("device_id", data.get("id"))
+        data["lat"], data["lon"] = coords.get("latitude"), coords.get("longitude")
+        if coords.get("speed") is not None and coords["speed"] >= 0:
+            data["speed"] = coords["speed"] * 1.943844  # m/s -> knots, converted to km/h below
+        if location.get("timestamp"):
+            try:
+                data["timestamp"] = datetime.fromisoformat(location["timestamp"].replace("Z", "+00:00")).timestamp()
+            except ValueError:
+                pass
+    else:
+        data.update(body)
 
     device_id = str(data.get("id", "")).strip()
 
@@ -227,23 +311,31 @@ def gps():
             pass
 
     position = locate_on_route(bus_id, latitude, longitude)
+    position["pace_ratio"] = measure_pace(bus_id, position, recorded_at)
+
+    # Time standing at a stop is not counted in the pace (only moving between stops)
+    at_stop = position["segment_progress"] == 1.0
+    pace_point = None if at_stop else position["planned_min"]
 
     write_database([
         (
-            "INSERT INTO bus_locations (bus_id, latitude, longitude, speed_kmh, recorded_at) VALUES (?, ?, ?, ?, ?)",
-            (bus_id, latitude, longitude, speed_kmh, recorded_at),
+            "INSERT INTO bus_locations (bus_id, latitude, longitude, speed_kmh, recorded_at, route_id, planned_min) "
+            "VALUES (?, ?, ?, ?, ?, ?, ?)",
+            (bus_id, latitude, longitude, speed_kmh, recorded_at, position["current_route_id"], pace_point),
         ),
         (
             "INSERT INTO bus_status (bus_id, occupancy, latitude, longitude, speed_kmh, last_updated, "
-            "current_route_id, base_km, next_stop_order, segment_progress, off_route_m) "
-            "VALUES (?, 0, ?, ?, ?, ?, ?, ?, ?, ?, ?) "
+            "current_route_id, base_km, next_stop_order, segment_progress, off_route_m, planned_min, pace_ratio) "
+            "VALUES (?, 0, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) "
             "ON CONFLICT(bus_id) DO UPDATE SET latitude = excluded.latitude, longitude = excluded.longitude, "
             "speed_kmh = excluded.speed_kmh, last_updated = excluded.last_updated, "
             "current_route_id = excluded.current_route_id, base_km = excluded.base_km, "
             "next_stop_order = excluded.next_stop_order, segment_progress = excluded.segment_progress, "
-            "off_route_m = excluded.off_route_m",
+            "off_route_m = excluded.off_route_m, planned_min = excluded.planned_min, "
+            "pace_ratio = excluded.pace_ratio",
             (bus_id, latitude, longitude, speed_kmh, recorded_at, position["current_route_id"], position["base_km"],
-             position["next_stop_order"], position["segment_progress"], position["off_route_m"]),
+             position["next_stop_order"], position["segment_progress"], position["off_route_m"],
+             position["planned_min"], position["pace_ratio"]),
         ),
     ])
 
