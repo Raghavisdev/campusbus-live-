@@ -1,3 +1,6 @@
+#ifndef GPS_H
+#define GPS_H
+
 #include "../models/Route.h"
 
 using namespace std;
@@ -12,3 +15,5 @@ class GPS
             double longitude
         );
 };
+
+#endif

@@ -11,6 +11,13 @@ DROP TABLE IF EXISTS route_stops;
 DROP TABLE IF EXISTS routes;
 DROP TABLE IF EXISTS bus_stops;
 DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS students;
+
+-- Students log in with their college ID (prototype: no password yet)
+CREATE TABLE students (
+    college_id TEXT PRIMARY KEY,
+    name TEXT NOT NULL
+);
 
 CREATE TABLE users (
     user_id INTEGER PRIMARY KEY,

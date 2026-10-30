@@ -169,7 +169,27 @@ For example, a route may contain:
 
 ```text
 S1 → S2 → S3 → S4 → S5
+```
 
 Route information is also stored in SQLite using `routes`, `route_stops`, and `route_segments`.
 
 The `route_stops` table stores the order of stops on each route, while `route_segments` stores the distance and estimated travel time between consecutive stops.
+
+## How to Run
+
+Requirements: Python 3.11 and MinGW `g++` on PATH (Windows).
+
+```bash
+pip install -r requirements.txt
+python database/init_db.py
+build.bat
+python vision/app.py
+```
+
+Then open http://127.0.0.1:5000 and log in with a test college ID: `2512510001`, `2512510002` or `2512510003`.
+
+Request flow: browser -> Flask (`/api/login`, `/api/stops`, `/api/recommend`) -> `output/recommend.exe <from> <to>` -> SQLite -> JSON back to the browser.
+
+Optional camera occupancy: `python vision/person_detection.py` (posts counts to `/update-occupancy`).
+
+Prototype limits: bus positions and occupancy come from mock data in `database/seed.sql`; the camera count is not yet written to SQLite.

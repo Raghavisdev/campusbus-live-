@@ -47,9 +47,15 @@ INSERT INTO buses (bus_id, route_id, capacity) VALUES
 
 -- bus_status
 INSERT INTO bus_status (bus_id, occupancy, latitude, longitude, last_updated) VALUES
-    ('B1', 30, 30.2855, 77.998, '2026-10-08 18:10:00'),
+    ('B1', 30, 30.268, 77.996, '2026-10-08 18:10:00'),
     ('B2', 50, 30.276, 77.9968, '2026-10-08 18:10:00'),
-    ('B3', 20, 30.2798, 78.0028, '2026-10-08 18:10:00');
+    ('B3', 20, 30.268, 77.996, '2026-10-08 18:10:00');
+
+-- students (mock college IDs for testing)
+INSERT INTO students (college_id, name) VALUES
+    ('2512510001', 'Test Student One'),
+    ('2512510002', 'Test Student Two'),
+    ('2512510003', 'Test Student Three');
 
 -- route_segments
 INSERT INTO route_segments (route_id, from_stop_id, to_stop_id, distance_km, travel_time_min) VALUES
