@@ -1,11 +1,72 @@
 stop_id,stop_name,routes,latitude,longitude,verified,note,google_maps_search
+S1,GEU,R04 R27 R28 R29 R30,30.2688994,77.9931391,0,Graphic Era Deemed to be University,https://www.google.com/maps/search/GEU%2C%20Dehradun
+S2,Ashley Hall,R01,30.327694,78.04647,0,Ashtley Hall,
+S3,Clock Tower,R01 R02,30.3242967,78.0418779,0,Clock Tower,
+S4,Darshanlal Chowk,R01 R02,30.3229432,78.0430817,0,Darshan Lal Chowk,
+S5,Prince Chowk,R01 R02,30.3153152,78.0373748,0,Prince Chowk,
+S6,Saharanpur Chowk,R01 R02 R03,30.3174931,78.0282788,0,Saharanpur Chowk,
+S7,ISBT,R04,30.2891887,77.9986668,0,ISBT Dehradun,https://www.google.com/maps/search/ISBT%2C%20Dehradun
+S8,Matawala Bagh,R03,30.3154173,78.0231062,0,"Mata Wala Bagh, Saharanpur Road",
 S9,Daudwala,R04,30.2542161,78.0295273,0,Daudwala (Mothrowala area),https://www.google.com/maps/search/Daudwala%2C%20Dehradun
 S10,Mathurawala,R04,30.2617154,78.0338078,0,"INFERRED: sheet says Mathurawala, Google has Mothrowala",https://www.google.com/maps/search/Mathurawala%2C%20Dehradun
 S11,Siddeshwar,R04,30.2793328,78.0372133,0,"INFERRED: Shree Siddheshwar Mahadev Temple, fits between Mothrowala and Bangali Kothi",https://www.google.com/maps/search/Siddeshwar%2C%20Dehradun
 S12,Bangali Kothi,R04,30.2850242,78.039678,0,Bengali Kothi,https://www.google.com/maps/search/Bangali%20Kothi%2C%20Dehradun
 S13,Kargi Chowk,R04,30.2908871,78.0247115,0,Kargi Chowk,https://www.google.com/maps/search/Kargi%20Chowk%2C%20Dehradun
-S7,ISBT,R04,30.2891887,77.9986668,0,ISBT Dehradun,https://www.google.com/maps/search/ISBT%2C%20Dehradun
-S1,GEU,R04 R27 R28 R29 R30,30.2688994,77.9931391,0,Graphic Era Deemed to be University,https://www.google.com/maps/search/GEU%2C%20Dehradun
+S14,Nepali Farm,R06,30.0195957,78.2008818,0,"INFERRED: point on Rishikesh Road, exact Nepali Farm stop not found",
+S15,Laal Tappad,R06,30.1245744,78.1664189,0,Laal Tappad,
+S16,Doiwala,R06 R07 R08,30.1759567,78.1245749,0,Doiwala Chowk,
+S17,Lachhiwala,R06 R07 R08,30.2095059,78.1255398,0,INFERRED: Lachhiwala toll plaza,
+S18,Kuanwala,R06 R07 R08,30.2395901,78.1022729,0,Kuwan Wala,
+S19,Harrawala,R06 R07 R08 R09,30.2605458,78.0965794,0,INFERRED: Harrawala railway station,
+S20,Miawala,R06 R07 R08 R09,30.2669664,78.0908651,0,Miyawala,
+S21,Mokampur,R06 R07 R08 R09 R10,30.2775191,78.0742195,0,INFERRED: Mohkampur railway overbridge,
+S22,Jogiwala,R06 R07 R08 R09 R10 R12 R13 R14,30.2867027,78.0657503,0,Jogiwala Chowk,
+S23,Rispana,R06 R07 R08 R09 R10 R11 R12 R13 R14 R22 R24,30.2939471,78.0578826,0,Rispana Pul,
+S24,Ranipokhri,R07,30.1812198,78.2105857,0,Ranipokhari,
+S25,Nakrounda More,R09,30.2334115,78.1279359,0,INFERRED: Nakraunda village,
+S26,Gujraunwala,R12,30.368211,78.0951431,0,"INFERRED: sheet says Gujraunwala, Google has Gujrara Mansingh",
+S27,Raipur Chowk,R12 R13,30.3037767,78.0961948,0,INFERRED: Raipur chowk (Hathi Khana chowk),
+S28,Dobhal Chowk,R12 R13,30.2983395,78.0805257,0,Dobhal Chowk,
+S29,6 No. Pulia,R12 R13 R20 R21,30.2988563,78.0728295,0,INFERRED: 6 Number Pulia area,
+S30,Ring Road,R12 R13,30.2924412,78.0717352,0,"ROAD: Ring Road, point near Ring Road Tower",
+S31,Post Office Nehru Gram,R12 R13 R14,30.2924687,78.072393,0,Nehru Gram Post Office,
+S32,Hathibadkala,R15,30.3479865,78.052254,0,Hathibarkala,
+S33,Garhi Cant,R15 R17,30.3579473,78.042782,0,Garhi Cantt,
+S34,Vijay Colony,R15 R17,30.3436005,78.043795,0,Vijay Colony,
+S35,Chir Bagh,R15 R17,30.3517008,78.0473751,0,Cheer Bagh,
+S36,CM House,R15 R17,30.3578727,78.0430418,0,Chief Minister Nivas,
+S37,ONGC Chowk,R15 R17 R19,30.3422388,78.0163993,0,ONGC Chowk,
+S38,Ballupur Chowk,R15 R16 R17 R18 R19,30.3331447,78.0113332,0,Ballupur Chowk,
+S39,GMS Road,R27 R28 R29 R30,30.3006578,78.0026799,0,GMS Road boarding point at Olympus High School (road is ~3 km long),https://www.google.com/maps/search/GMS%20Road%2C%20Dehradun
+S40,Supply,R16,30.3635733,78.0427617,0,"INFERRED: Supply Depot, Garhi Cantt",
+S41,Bindal Pul,R18,30.3272123,78.0329037,0,Bindal Bridge,
+S42,Rajender Nagar,R18,30.3395589,78.0231062,0,Rajender Nagar,
+S43,Yamuna Colony,R18,30.3317306,78.0286934,0,Yamuna Colony Chowk,
+S44,Kishan Nagar,R18,30.3334798,78.0265724,0,Kishan Nagar Chowk,
+S45,Blood Bank,R18,30.3342243,78.0176667,0,"INFERRED: IMA Blood Bank, between Kishan Nagar and Ballupur",
+S46,Khirsali Chowk,R20,30.3724068,78.0988456,0,"INFERRED: sheet says Khirsali, Google has Kirsali Chowk",
+S47,IT Park,R20 R21,30.3564218,78.0849023,0,"IT Park, Sahastradhara Road",
+S48,Nala Paani Chowk,R20 R21,30.3310731,78.066173,0,Nalapani Chowk,
+S49,Shastdhara Crossing,R20 R21,30.3238684,78.0640769,0,Sahastradhara Crossing Chowk,
+S50,Ladpur,R20 R21,30.3155112,78.0780299,0,Ladpur,
+S51,Fountain Chowk Rispana,R20 R21,30.3022668,78.0568796,0,Fountain Chowk (Rispana),
+S52,Fountain Chowk,R22,30.3022668,78.0568796,0,"Fountain Chowk, same point as S51",
+S53,Nehru Colony,R22,30.2994681,78.0580609,0,Nehru Colony,
+S54,Naya Gaon Palio,R23,30.3050268,77.9066383,0,INFERRED: Naya Gaon Pelio post office,
+S55,Badowala,R23,30.3010562,77.9524488,0,Badowala,
+S56,Telpur,R23,30.3114524,77.980289,0,Telpur,
+S57,Mehuwala,R23,30.3110077,77.9847161,0,Mehuwala Mafi,
+S58,Rajpur,R24,30.3900335,78.0930988,0,Rajpur Chowk,
+S59,Great Value,R24,30.363831,78.069534,0,"Hotel Great Value, Rajpur Road",
+S60,Dilaram Bazar,R24,30.3364438,78.0553159,0,Dilaram Bazaar,
+S61,Nanni Bakery,R24,30.3320508,78.0537872,0,"INFERRED: Nany's Bakery, Rajpur Road",
+S62,Survey Chowk,R24,30.3256068,78.0527114,0,Survey Chowk,
+S63,Dwarka Store,R24,30.3157339,78.0498275,0,Dwarka Store,
+S64,Araghar,R24,30.3087176,78.0484072,0,Araghar Chowk,
+S65,Race Course,R25,30.3136374,78.0461186,0,Race Course Chowk,
+S66,Dharampur,R25,30.3020331,78.0473617,0,Dharampur Chowk,
+S67,Mata Mandir,R25,30.2986723,78.0423072,0,"INFERRED: Sheetla Mata Mandir, between Dharampur and Kargi Chowk",
+S68,Kulhal,R26,,,0,NOT FOUND on Google Maps: needs to be pinned by hand,
 S69,Vikasnagar,R27,30.4711227,77.7753138,0,Vikasnagar bus stop,https://www.google.com/maps/search/Vikasnagar%2C%20Dehradun
 S70,Tehsil,R27,30.4532974,77.754045,0,INFERRED: Vikasnagar Tehsil (SDM office),https://www.google.com/maps/search/Tehsil%2C%20Dehradun
 S71,Harbatpur Chowk,R27,30.4382863,77.7366242,0,"INFERRED: Herbertpur town centre, exact chowk not found",https://www.google.com/maps/search/Harbatpur%20Chowk%2C%20Dehradun
@@ -18,7 +79,6 @@ S77,Prem Nagar,R27 R28 R29 R30,30.3361162,77.9635208,0,Prem Nagar Chowk,https://
 S78,Panditwari,R27 R28 R29 R30,30.3300906,77.9881334,0,Panditwari,https://www.google.com/maps/search/Panditwari%2C%20Dehradun
 S79,Vasant Vihar,R27 R28 R29,30.3226277,78.0036994,0,"INFERRED: Vasant Vihar (2 results, took the one on the route)",https://www.google.com/maps/search/Vasant%20Vihar%2C%20Dehradun
 S80,Baliwala Chowk,R27 R28 R29 R30,30.3239145,78.0113332,0,Balliwala Chowk,https://www.google.com/maps/search/Baliwala%20Chowk%2C%20Dehradun
-S39,GMS Road,R27 R28 R29 R30,30.3006578,78.0026799,0,GMS Road boarding point at Olympus High School (road is ~3 km long),https://www.google.com/maps/search/GMS%20Road%2C%20Dehradun
 S81,Selaqui Chowk,R28,30.3681585,77.8653126,0,INFERRED: same point as Selaqui until confirmed,https://www.google.com/maps/search/Selaqui%20Chowk%2C%20Dehradun
 S82,Bhauwala Chowk,R29,30.3972299,77.918174,0,"INFERRED: Bhauwala village centre, exact chowk not found",https://www.google.com/maps/search/Bhauwala%20Chowk%2C%20Dehradun
 S83,Manduwala,R29,30.3880099,77.9410251,0,Manduwala,https://www.google.com/maps/search/Manduwala%2C%20Dehradun
