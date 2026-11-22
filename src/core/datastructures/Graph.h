@@ -3,6 +3,7 @@
 #include <vector>
 #include <unordered_map>
 #include <string>
+#include "MinHeap.h"
 #include "../models/Route.h"
 using namespace std;
 struct Edge
