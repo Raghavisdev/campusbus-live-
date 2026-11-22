@@ -3,12 +3,23 @@
 #include <vector>
 #include <unordered_map>
 #include <string>
+#include "MinHeap.h"
 #include "../models/Route.h"
 using namespace std;
 struct Edge
 {
     string destination;
-    double traveltime;
+    double  traveltime;
+    string routeID;   
+};
+struct Journey
+{
+    bool found;
+    double minutes;            
+    vector<string> stops;       
+    vector<string>  legRoutes;   
+    Journey() : found(false),  minutes(0.0) {}
+
 };
 class Graph
 {
@@ -20,5 +31,6 @@ public:
     vector<Edge> getNeighbours(string stopID) const;
     vector<string> findRoutes(string stopID) const;
     vector<string> findRoutes(string fromStopID, string toStopID) const;
+    Journey  shortestJourney(string fromStopID, string toStopID) const;
 };
 #endif
