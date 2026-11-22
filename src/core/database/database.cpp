@@ -1,24 +1,23 @@
 #include "Database.h"
 #include <iostream>
-
 using namespace std;
 
 Database::Database(string databasePath)
 {
-    db = NULL;
+    db =NULL;
 
-    int result = sqlite3_open(databasePath.c_str(), &db);
+    int result= sqlite3_open(databasePath.c_str(), &db);
 
-    if (result != SQLITE_OK)
+    if (result !=SQLITE_OK)
     {
-        cout << "Database could not be opened." << endl;
-        db = NULL;
+        cout<<"Database could not be opened." << endl;
+        db =NULL;
     }
 }
 
 Database::~Database()
 {
-    if (db != NULL)
+    if (db !=NULL)
     {
         sqlite3_close(db);
     }
@@ -35,18 +34,17 @@ Bus Database::getBus(string busID)
         "SELECT bus_id, route_id, capacity "
         "FROM buses "
         "WHERE bus_id = ?;";
-
     sqlite3_stmt* statement;
 
-    int result = sqlite3_prepare_v2(
+    int result= sqlite3_prepare_v2(
         db,
         query.c_str(),
-        -1,
+        -1, 
         &statement,
         NULL
     );
 
-    if (result != SQLITE_OK)
+    if (result!= SQLITE_OK)
     {
         return Bus("", "", 0);
     }
@@ -55,12 +53,11 @@ Bus Database::getBus(string busID)
         statement,
         1,
         busID.c_str(),
-        -1,
+        -1, 
         SQLITE_STATIC
     );
 
     result = sqlite3_step(statement);
-
     if (result != SQLITE_ROW)
     {
         sqlite3_finalize(statement);
@@ -68,24 +65,21 @@ Bus Database::getBus(string busID)
     }
 
     string id = (const char*)sqlite3_column_text(statement, 0);
-    string routeID = (const char*)sqlite3_column_text(statement, 1);
-    int capacity = sqlite3_column_int(statement, 2);
+    string routeID= (const char*)sqlite3_column_text(statement, 1);
+    int capacity =sqlite3_column_int(statement, 2);
 
     sqlite3_finalize(statement);
-
     return Bus(id, routeID, capacity);
 }
 
 vector<Bus> Database::getAllBuses()
 {
     vector<Bus> buses;
-
     string query =
         "SELECT bus_id, route_id, capacity "
         "FROM buses;";
 
     sqlite3_stmt* statement;
-
     int result = sqlite3_prepare_v2(
         db,
         query.c_str(),
@@ -98,7 +92,6 @@ vector<Bus> Database::getAllBuses()
     {
         return buses;
     }
-
     while (sqlite3_step(statement) == SQLITE_ROW)
     {
         string busID = (const char*)sqlite3_column_text(statement, 0);
@@ -111,10 +104,8 @@ vector<Bus> Database::getAllBuses()
     }
 
     sqlite3_finalize(statement);
-
     return buses;
 }
-
 Bus Database::getBusStatus(string busID)
 {
     string query =
@@ -126,7 +117,6 @@ Bus Database::getBusStatus(string busID)
         "ON buses.bus_id = bus_status.bus_id "
         "WHERE buses.bus_id = ?;";
     sqlite3_stmt* statement;
-
     int result = sqlite3_prepare_v2(
         db,
         query.c_str(),
@@ -134,7 +124,6 @@ Bus Database::getBusStatus(string busID)
         &statement,
         NULL
     );
-
     if (result != SQLITE_OK)
     {
         return Bus("", "", 0);
@@ -147,9 +136,7 @@ Bus Database::getBusStatus(string busID)
         -1,
         SQLITE_STATIC
     );
-
     result=sqlite3_step(statement);
-
     if (result !=SQLITE_ROW)
     {
         sqlite3_finalize(statement);
@@ -159,32 +146,25 @@ Bus Database::getBusStatus(string busID)
     string routeID = (const char*)sqlite3_column_text(statement, 1);
     int capacity = sqlite3_column_int(statement, 2);
     int occupancy = sqlite3_column_int(statement, 3);
-
     double latitude = sqlite3_column_double(statement, 4);
     double longitude = sqlite3_column_double(statement, 5);
-
     string lastUpdated =(const char*)sqlite3_column_text(statement, 6);
-
     Bus bus(id, routeID, capacity);
 
     bus.updateOccupancy(occupancy);
     bus.updateLocation(latitude, longitude);
     bus.setLastUpdated(lastUpdated);
-
     sqlite3_finalize(statement);
-
     return bus;
 }
 vector<BusStop> Database::getAllStops()
 {
     vector<BusStop> stops;
-
     string query =
         "SELECT stop_id, stop_name, latitude, longitude "
         "FROM bus_stops;";
 
     sqlite3_stmt* statement;
-
     int result = sqlite3_prepare_v2(
         db,
         query.c_str(),
@@ -197,19 +177,16 @@ vector<BusStop> Database::getAllStops()
     {
         return stops;
     }
-
     while (sqlite3_step(statement) == SQLITE_ROW)
     {
         string stopID = (const char*)sqlite3_column_text(statement, 0);
-        string stopName = (const char*)sqlite3_column_text(statement, 1);
+        string stopName= (const char*)sqlite3_column_text(statement, 1);
         double latitude = sqlite3_column_double(statement, 2);
         double longitude = sqlite3_column_double(statement, 3);
-
         stops.push_back(BusStop(stopID, stopName, latitude, longitude));
     }
 
     sqlite3_finalize(statement);
-
     return stops;
 }
 
@@ -233,7 +210,6 @@ Route Database::getRoute(string routeID)
         "ORDER BY route_stops.stop_order;";
 
     sqlite3_stmt* statement;
-
     int result = sqlite3_prepare_v2(
         db,
         query.c_str(),
@@ -274,23 +250,17 @@ Route Database::getRoute(string routeID)
             continue;
         }
 
-        // A missing segment means the database is incomplete for this route.
         if (sqlite3_column_type(statement, 4) == SQLITE_NULL)
         {
             cout << "Missing travel time for route " << routeID
                  << " at stop " << stopID << endl;
-
             sqlite3_finalize(statement);
             return Route("");
         }
-
         double travelTime = sqlite3_column_double(statement, 4);
-
         route.addstop(stop, travelTime);
     }
-
     sqlite3_finalize(statement);
-
     return route;
 }
 
@@ -304,7 +274,6 @@ vector<Route> Database::getAllRoutes()
         "FROM routes;";
 
     sqlite3_stmt* statement;
-
     int result = sqlite3_prepare_v2(
         db,
         query.c_str(),
@@ -324,11 +293,9 @@ vector<Route> Database::getAllRoutes()
     }
 
     sqlite3_finalize(statement);
-
     for (size_t i = 0; i < routeIDs.size(); i++)
     {
         Route route = getRoute(routeIDs[i]);
-
         // Graph::addRoute needs at least two stops.
         if (route.getRoute().size() < 2)
         {
