@@ -9,7 +9,7 @@ using namespace std;
 struct Edge
 {
     string destination;
-    double traveltime;
+    double  traveltime;
     string routeID;   
 };
 struct Journey
@@ -31,5 +31,6 @@ public:
     vector<Edge> getNeighbours(string stopID) const;
     vector<string> findRoutes(string stopID) const;
     vector<string> findRoutes(string fromStopID, string toStopID) const;
+    Journey  shortestJourney(string fromStopID, string toStopID) const;
 };
 #endif
