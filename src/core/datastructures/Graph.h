@@ -12,13 +12,14 @@ struct Edge
     double traveltime;
     string routeID;   
 };
-// Result of Graph::shortestJourney
 struct Journey
 {
     bool found;
     double minutes;            
     vector<string> stops;       
     vector<string>  legRoutes;   
+    Journey() : found(false),  minutes(0.0) {}
+
 };
 class Graph
 {
