@@ -5,9 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CampusBus Live - Find Bus</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 </head>
 <body data-page="home">
-  <main class="container">
+  <main class="container wide">
     <header class="topbar">
       <p id="welcome" class="welcome"></p>
       <button type="button" id="logoutButton" class="secondary">Logout</button>
@@ -31,9 +32,16 @@
 
     <section id="result" class="card result" aria-live="polite" hidden></section>
 
+    <section id="mapCard" class="card" hidden>
+      <h2>Live bus map</h2>
+      <div id="map"></div>
+      <p id="mapInfo" class="map-info"></p>
+    </section>
+
     <p class="note">Prototype: bus location and occupancy are simulated (mock data in SQLite).</p>
   </main>
 
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="api.js"></script>
   <script src="app.js"></script>
 </body>

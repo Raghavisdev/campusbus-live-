@@ -198,3 +198,51 @@ button.secondary:hover:not(:disabled) {
   font-size: 0.85rem;
   color: var(--muted);
 }
+/* Live bus map (home page) */
+.container.wide {
+  max-width: 720px;
+}
+
+#map {
+  height: 380px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+
+.map-info {
+  margin: 10px 0 0;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.pin {
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 12px;
+  text-align: center;
+  border: 2px solid #ffffff;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
+}
+
+.pin-bus {
+  width: 44px;
+  height: 26px;
+  line-height: 22px;
+  border-radius: 13px;
+  background: #1a56db;
+}
+
+.pin-me {
+  width: 60px;
+  height: 24px;
+  line-height: 20px;
+  border-radius: 12px;
+  background: #c62828;
+}
+
+/* Route plan shown when there is no live bus */
+.result.is-error p.plan {
+  margin-top: 10px;
+  font-size: 0.92rem;
+  color: var(--text);
+}

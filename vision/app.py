@@ -364,6 +364,70 @@ def buses():
     return jsonify([dict(zip(keys, row)) for row in rows])
 
 
+@app.route("/api/track", methods=["GET"])
+def track():
+    """Everything the map page needs for one search: the recommended bus, where it is,
+    its route, and the part of the road it still has to drive to reach the student."""
+
+    answer = recommend()
+    if isinstance(answer, tuple):
+        answer = answer[0]
+    answer = answer.get_json()
+
+    if not answer.get("ok"):
+        return jsonify(answer)
+
+    from_stop = request.args.get("from", "")
+    bus_id = answer["bus"]
+
+    status = query_database(
+        "SELECT s.latitude, s.longitude, s.base_km, s.current_route_id, s.last_updated, b.route_id "
+        "FROM bus_status s JOIN buses b ON b.bus_id = s.bus_id WHERE s.bus_id = ?",
+        (bus_id,),
+    )
+    if not status:
+        return jsonify({"ok": False, "error": "Bus position unknown"})
+
+    bus_lat, bus_lon, base_km, current_route, last_updated, base_route = status[0]
+    route_id = current_route or base_route
+
+    shape = query_database(
+        "SELECT latitude, longitude, km FROM route_shapes WHERE route_id = ? ORDER BY seq", (route_id,)
+    )
+    stops = query_database(
+        "SELECT s.stop_id, s.stop_name, s.latitude, s.longitude, rs.km FROM route_stops rs "
+        "JOIN bus_stops s ON s.stop_id = rs.stop_id WHERE rs.route_id = ? ORDER BY rs.stop_order",
+        (route_id,),
+    )
+    if not shape or base_km is None:
+        return jsonify({"ok": False, "error": "No road line for this route yet"})
+
+    # Distance along the road from the start of this trip (the reverse trip counts from the other end)
+    total_km = shape[-1][2]
+    route_km = total_km - base_km if route_id.endswith("R") else base_km
+
+    student = next((s for s in stops if s[0] == from_stop), None)
+    if student is None or student[4] is None:
+        return jsonify({"ok": False, "error": "Your stop is not on the bus's route"})
+
+    remaining = [[bus_lat, bus_lon]]
+    remaining += [[lat, lon] for lat, lon, km in shape if route_km <= km <= student[4]]
+    remaining.append([student[2], student[3]])
+
+    return jsonify({
+        "ok": True,
+        "answer": answer,
+        "bus": {"id": bus_id, "route": route_id, "lat": bus_lat, "lon": bus_lon, "last_updated": last_updated},
+        "route": {
+            "line": [[lat, lon] for lat, lon, _ in shape],
+            "stops": [{"id": s[0], "name": s[1], "lat": s[2], "lon": s[3]} for s in stops],
+        },
+        "student": {"stop_id": student[0], "name": student[1], "lat": student[2], "lon": student[3]},
+        "remaining": remaining,
+        "distance_km": round(max(student[4] - route_km, 0), 1),
+    })
+
+
 # ---------- Occupancy (camera -> Flask -> C++) ----------
 
 @app.route("/update-occupancy", methods=["POST"])

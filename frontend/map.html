@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CampusBus Live - Bus Map</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <style>
+    html, body { height: 100%; margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+    #map { height: 100%; }
+    .panel { position: absolute; z-index: 1000; top: 12px; left: 12px; width: 280px; max-width: calc(100% - 24px);
+             background: #ffffff; color: #1c2330; border-radius: 12px; padding: 14px 16px;
+             box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25); }
+    .panel h1 { margin: 0 0 8px; font-size: 1.05rem; color: #1a56db; }
+    .panel ul { list-style: none; margin: 0; padding: 0; }
+    .panel li { display: flex; justify-content: space-between; padding: 5px 0; border-top: 1px solid #e3e7ee; font-size: 0.92rem; }
+    .panel li span { color: #5b6474; }
+    .panel .err { color: #c62828; margin: 6px 0 0; font-size: 0.92rem; }
+    .panel .note { margin: 8px 0 0; font-size: 0.78rem; color: #5b6474; }
+    .bus { background: #1a56db; color: #fff; font-weight: 700; font-size: 12px; text-align: center; line-height: 26px;
+           width: 44px; height: 26px; border-radius: 13px; border: 2px solid #fff; box-shadow: 0 1px 6px rgba(0,0,0,.5); }
+    .me { background: #c62828; color: #fff; font-weight: 700; font-size: 12px; text-align: center; line-height: 24px;
+          width: 60px; height: 24px; border-radius: 12px; border: 2px solid #fff; box-shadow: 0 1px 6px rgba(0,0,0,.5); }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <div class="panel">
+    <h1 id="title">Finding your bus...</h1>
+    <ul id="details"></ul>
+    <p class="err" id="error"></p>
+    <p class="note">Updates every 5 seconds.</p>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    // Live map for one search: ?from=<your stop id>&to=<destination stop id>
+    const params = new URLSearchParams(location.search);
+    const fromStop = params.get("from") || "S39";   // default: GMS Road
+    const toStop = params.get("to") || "S1";        // default: GEU
+
+    const map = L.map("map");
+    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 19, attribution: "&copy; OpenStreetMap contributors"
+    }).addTo(map);
+
+    let routeLine = null, remainingLine = null, busMarker = null, studentMarker = null, stopMarkers = [], fitted = false;
+
+    function setDetails(rows) {
+      const list = document.getElementById("details");
+      list.replaceChildren();
+      for (const [label, value] of rows) {
+        const li = document.createElement("li");
+        const a = document.createElement("span");
+        a.textContent = label;
+        const b = document.createElement("strong");
+        b.textContent = value;
+        li.append(a, b);
+        list.appendChild(li);
+      }
+    }
+
+    function secondsAgo(timestamp) {
+      const then = new Date(timestamp.replace(" ", "T") + "Z").getTime();
+      return Math.max(0, Math.round((Date.now() - then) / 1000));
+    }
+
+    async function refresh() {
+      const error = document.getElementById("error");
+      let data;
+      try {
+        const query = new URLSearchParams({ from: fromStop, to: toStop });
+        data = await (await fetch("/api/track?" + query.toString())).json();
+      } catch (e) {
+        error.textContent = "Cannot reach the server.";
+        return;
+      }
+
+      if (!data.ok) {
+        document.getElementById("title").textContent = "No bus right now";
+        error.textContent = data.error;
+        setDetails([]);
+        return;
+      }
+      error.textContent = "";
+
+      const a = data.answer;
+      document.getElementById("title").textContent = "Bus " + a.bus + " (route " + data.bus.route + ")";
+      setDetails([
+        ["Bus is", data.distance_km + " km away"],
+        ["Arrives in", a.wait_min + " min"],
+        ["Ride to destination", a.ride_min + " min"],
+        ["Total", a.eta_min + " min"],
+        ["Seats left", String(a.seats_left)],
+        ["Last GPS update", secondsAgo(data.bus.last_updated) + " s ago"]
+      ]);
+
+      // Route and stops are drawn once
+      if (!routeLine) {
+        routeLine = L.polyline(data.route.line, { color: "#1a56db", weight: 5, opacity: 0.55 }).addTo(map);
+        for (const s of data.route.stops) {
+          const marker = L.circleMarker([s.lat, s.lon], { radius: 6, color: "#143769", weight: 2, fillColor: "#fff", fillOpacity: 1 }).addTo(map);
+          marker.bindTooltip(s.name, { permanent: data.route.stops.length <= 8, direction: "top", offset: [0, -6] });
+          stopMarkers.push(marker);
+        }
+        studentMarker = L.marker([data.student.lat, data.student.lon], {
+          icon: L.divIcon({ className: "", html: '<div class="me">You</div>', iconSize: [60, 24], iconAnchor: [30, 12] })
+        }).addTo(map).bindTooltip("You are here: " + data.student.name, { direction: "bottom", offset: [0, 12] });
+        busMarker = L.marker([data.bus.lat, data.bus.lon], {
+          icon: L.divIcon({ className: "", html: '<div class="bus">' + data.bus.id + '</div>', iconSize: [44, 26], iconAnchor: [22, 13] }),
+          zIndexOffset: 1000
+        }).addTo(map);
+        map.fitBounds(routeLine.getBounds(), { padding: [50, 50] });
+        fitted = true;
+      }
+
+      // The bus and the road still to drive update every time
+      busMarker.setLatLng([data.bus.lat, data.bus.lon]);
+      if (remainingLine) { map.removeLayer(remainingLine); }
+      remainingLine = L.polyline(data.remaining, { color: "#ff8a00", weight: 7 }).addTo(map);
+    }
+
+    refresh();
+    setInterval(refresh, 5000);
+  </script>
+</body>
+</html>

@@ -32,3 +32,12 @@ async function recommend(fromId, toId) {
   const query = new URLSearchParams({ from: fromId, to: toId });
   return callApi("/api/recommend?" + query.toString());
 }
+
+// GET /api/track?from=&to=
+//   →  { ok: true, answer, bus, route, student, remaining, distance_km }
+//   |  { ok: false, error }
+// Same answer as recommend() plus the bus position and route for the map.
+async function track(fromId, toId) {
+  const query = new URLSearchParams({ from: fromId, to: toId });
+  return callApi("/api/track?" + query.toString());
+}
