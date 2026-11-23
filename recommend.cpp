@@ -11,6 +11,7 @@
 #include "src/core/database/database.h"
 #include "src/core/bus_location_manager/BusLocationManager.h"
 #include "src/core/bus_recommendation/BusRecommendation.h"
+#include "src/core/datastructures/Graph.h"
 
 using namespace std;
 
@@ -35,6 +36,52 @@ bool stopExists(const vector<BusStop>& stops, string stopID)
     }
 
     return false;
+}
+
+string stopName(const vector<BusStop>& stops, string stopID)
+{
+    for (size_t i = 0; i < stops.size(); i++)
+    {
+        if (stops[i].getStopID() == stopID)
+        {
+            return stops[i].getStopName();
+        }
+    }
+
+    return stopID;
+}
+
+// The fastest journey as JSON: total minutes, number of bus changes and one entry per leg
+// (consecutive stops on the same route form one leg).
+string planJson(const Journey& journey, const vector<BusStop>& stops)
+{
+    string legs = "";
+    int legCount = 0;
+    size_t start = 0;
+
+    for (size_t i = 1; i <= journey.legRoutes.size(); i++)
+    {
+        if (i == journey.legRoutes.size() || journey.legRoutes[i] != journey.legRoutes[start])
+        {
+            if (legCount > 0)
+            {
+                legs += ", ";
+            }
+
+            legs += "{\"route\": \"" + journey.legRoutes[start] + "\""
+                  + ", \"from\": \"" + stopName(stops, journey.stops[start]) + "\""
+                  + ", \"to\": \"" + stopName(stops, journey.stops[i]) + "\"}";
+
+            legCount++;
+            start = i;
+        }
+    }
+
+    string json = "{\"minutes\": " + to_string((int)round(journey.minutes))
+                + ", \"transfers\": " + to_string(legCount - 1)
+                + ", \"legs\": [" + legs + "]}";
+
+    return json;
 }
 
 int main(int argc, char* argv[])
@@ -90,7 +137,24 @@ int main(int argc, char* argv[])
 
     if (result.bus.getBusID() == "")
     {
-        printError("No bus available for this trip");
+        // No live bus: still show how the stops connect, using Dijkstra on the route graph
+        Graph graph;
+
+        for (size_t i = 0; i < routes.size(); i++)
+        {
+            graph.addRoute(routes[i]);
+        }
+
+        Journey journey = graph.shortestJourney(currentStop, destination);
+
+        if (!journey.found)
+        {
+            printError("No bus available for this trip");
+            return 0;
+        }
+
+        cout << "{\"ok\": false, \"error\": \"No bus available for this trip\", \"plan\": "
+             << planJson(journey, stops) << "}" << endl;
         return 0;
     }
 

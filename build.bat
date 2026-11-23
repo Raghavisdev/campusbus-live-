@@ -24,4 +24,7 @@ g++ main.cpp %CORE% -o output\main.exe || exit /b 1
 echo Building test_routes.exe...
 g++ test_routes.cpp %CORE% -o output\test_routes.exe || exit /b 1
 
+echo Building test_graph.exe...
+g++ test_graph.cpp %CORE% -o output\test_graph.exe || exit /b 1
+
 echo Done.
